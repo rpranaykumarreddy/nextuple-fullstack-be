@@ -2,7 +2,7 @@ package com.nextuple.pranay.fullstack.config;
 
 import com.nextuple.pranay.fullstack.security.JWTAuthenticationEntryPoint;
 import com.nextuple.pranay.fullstack.security.JWTAuthenticationFilter;
-import com.nextuple.pranay.fullstack.security.UserInfoUserDetailsService;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,6 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@AllArgsConstructor
 public class SecurityConfig {
     private UserDetailsService userDetailsService;
     private JWTAuthenticationEntryPoint jwtAuthenticationEntryPoint;

@@ -45,6 +45,6 @@ public class AuthService {
                 );
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String token = jwtTokenProvider.generateToken(authentication);
-        return new ResponseEntity<>("User logged-in successfully",HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(token,HttpStatus.ACCEPTED);
     }
 }
