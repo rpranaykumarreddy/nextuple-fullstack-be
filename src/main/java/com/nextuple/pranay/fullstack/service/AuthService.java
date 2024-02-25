@@ -1,6 +1,10 @@
 package com.nextuple.pranay.fullstack.service;
 
+import com.nextuple.pranay.fullstack.dto.AddUserRequest;
+import com.nextuple.pranay.fullstack.dto.AddUserResponse;
+import com.nextuple.pranay.fullstack.dto.JWTAuthResponse;
 import com.nextuple.pranay.fullstack.dto.LoginAuthRequest;
+import com.nextuple.pranay.fullstack.exception.CustomException;
 import com.nextuple.pranay.fullstack.model.Users;
 import com.nextuple.pranay.fullstack.repo.UsersRepo;
 import com.nextuple.pranay.fullstack.security.JWTTokenProvider;
@@ -27,47 +31,60 @@ public class AuthService {
     @Autowired
     private JWTTokenProvider jwtTokenProvider;
 
-    public ResponseEntity<?> addUser(Users user){
-        System.out.println(user);
-        if(usersRepo.existsByUsername(user.getUsername())){
-            throw new RuntimeException("Username Exists");
+    public ResponseEntity<?> addUser(AddUserRequest addUserRequest){
+        if(usersRepo.existsByUsername(addUserRequest.getUsername())){
+           throw new CustomException.EntityExistsException("Username already exists. Please try another username");
         }
-        if(usersRepo.existsByEmail(user.getEmail())){
-            throw new RuntimeException("Email Exists");
+        if(usersRepo.existsByEmail(addUserRequest.getEmail())){
+            throw new CustomException.EntityExistsException("Email Exists. Please try login with your email or try another email.");
         }
-        Users userDB = new Users();
-        userDB.setUsername(user.getUsername());
-        userDB.setEmail(user.getEmail());
-        userDB.setPassword(passwordEncoder.encode(user.getPassword()));
+        Users userDB = addUserRequest.toUser();
+        userDB.setPassword(passwordEncoder.encode(userDB.getPassword()));
         userDB.setRoles("ROLE_USER");
         userDB.setCreated(LocalDateTime.now());
-        usersRepo.save(userDB);
-        return new ResponseEntity<>(userDB, HttpStatus.CREATED);
+        Users saveResponse = null;
+        try {
+            saveResponse=usersRepo.save(userDB);
+        } catch (Exception e) {
+            throw new CustomException.UnableToSaveException("Unable to save user");
+        }
+        return new ResponseEntity<>(
+                new AddUserResponse("User Created Successfully with username: " + saveResponse.getUsername(),saveResponse.getUsername())
+                , HttpStatus.CREATED);
     }
-    public ResponseEntity<?> addAdmin(Users user){
-        System.out.println(user);
-        if(usersRepo.existsByUsername(user.getUsername())){
-            throw new RuntimeException("Username Exists");
+    public ResponseEntity<?> addAdmin(AddUserRequest addUserRequest){
+        if(usersRepo.existsByUsername(addUserRequest.getUsername())){
+            throw new CustomException.EntityExistsException("Username already exists. Please try another username");
         }
-        if(usersRepo.existsByEmail(user.getEmail())){
-            throw new RuntimeException("Email Exists");
+        if(usersRepo.existsByEmail(addUserRequest.getEmail())){
+            throw new CustomException.EntityExistsException("Email Exists. Please try login with your email or try another email.");
         }
-        Users userDB = new Users();
-        userDB.setUsername(user.getUsername());
-        userDB.setEmail(user.getEmail());
-        userDB.setPassword(passwordEncoder.encode(user.getPassword()));
-        userDB.setRoles("ROLE_ADMIN, ROLE_USER");
+        Users userDB = addUserRequest.toUser();
+        userDB.setPassword(passwordEncoder.encode(userDB.getPassword()));
+        userDB.setRoles("ROLE_ADMIN");
         userDB.setCreated(LocalDateTime.now());
+        Users saveResponse = null;
+        try {
+            saveResponse = usersRepo.save(userDB);
+        } catch (Exception e) {
+            throw new CustomException.UnableToSaveException("Unable to save user");
+        }
         usersRepo.save(userDB);
-        return new ResponseEntity<>(userDB, HttpStatus.CREATED);
+        return new ResponseEntity<>(
+                new AddUserResponse("Admin Created Successfully with username: " + saveResponse.getUsername(),saveResponse.getUsername())
+                , HttpStatus.CREATED);
     }
-    public String login(LoginAuthRequest loginDto) {
+    public ResponseEntity<?> login(LoginAuthRequest loginDto) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 loginDto.getUsername(),
                 loginDto.getPassword())
                 );
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String token = jwtTokenProvider.generateToken(authentication);
-        return token;
+
+        JWTAuthResponse jwtAuthResponse = new JWTAuthResponse();
+        jwtAuthResponse.setAccessToken(token);
+
+        return new ResponseEntity<>(jwtAuthResponse, HttpStatus.OK);
     }
 }

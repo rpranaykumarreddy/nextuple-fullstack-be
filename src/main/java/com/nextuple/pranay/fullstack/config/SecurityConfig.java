@@ -14,6 +14,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,10 +29,10 @@ public class SecurityConfig {
     private UserDetailsService userDetailsService;
     private JWTAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private JWTAuthenticationFilter jwtAuthenticationFilter;
-    @SuppressWarnings("removal")
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable()
+        http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize ->{
                         authorize.requestMatchers("/audit/**").hasRole("ADMIN");
                         authorize.requestMatchers("/wallet/**").authenticated();

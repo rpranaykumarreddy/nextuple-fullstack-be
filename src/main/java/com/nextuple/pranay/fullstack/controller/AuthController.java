@@ -1,10 +1,13 @@
 package com.nextuple.pranay.fullstack.controller;
 
+import com.nextuple.pranay.fullstack.dto.AddUserRequest;
 import com.nextuple.pranay.fullstack.dto.JWTAuthResponse;
 import com.nextuple.pranay.fullstack.dto.LoginAuthRequest;
 import com.nextuple.pranay.fullstack.model.Users;
 import com.nextuple.pranay.fullstack.security.UserInfoUserDetailsService;
 import com.nextuple.pranay.fullstack.service.AuthService;
+import dev.samstevens.totp.secret.DefaultSecretGenerator;
+import dev.samstevens.totp.secret.SecretGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,30 +24,33 @@ public class AuthController {
 
     @Autowired
     AuthService authService;
+    SecretGenerator secretGenerator = new DefaultSecretGenerator(64);
 
     @PostMapping(value = "/adduser")
-    public ResponseEntity<?> addNewUser(@RequestBody Users user){
-        return authService.addUser(user);
+    public ResponseEntity<?> addNewUser(@RequestBody AddUserRequest addUserRequest){
+        addUserRequest.validate();
+        return authService.addUser(addUserRequest);
     }
+
     @PostMapping(value = "/addadmin")
-    public ResponseEntity<?> addNewAdmin(@RequestBody Users user){
-        return authService.addAdmin(user);
+    public ResponseEntity<?> addNewAdmin(@RequestBody  AddUserRequest addUserRequest){
+        addUserRequest.validate();
+        return authService.addAdmin(addUserRequest);
     }
+
     @PostMapping(value = "/signin")
     public ResponseEntity<?> login(@RequestBody LoginAuthRequest loginDto){
-        String token = authService.login(loginDto);
-
-        JWTAuthResponse jwtAuthResponse = new JWTAuthResponse();
-        jwtAuthResponse.setAccessToken(token);
-
-        return new ResponseEntity<>(jwtAuthResponse, HttpStatus.OK);
+        loginDto.validate();
+        return authService.login(loginDto);
     }
-    @PostMapping(value = "/audit")
-    public ResponseEntity<?> testAPIAudit(){
-        return new ResponseEntity<>("Entered Audit API", HttpStatus.ACCEPTED);
-    }
-    @PostMapping(value = "/wallet")
-    public ResponseEntity<?> testAPIWallet(){
-        return new ResponseEntity<>("Entered Wallet API", HttpStatus.ACCEPTED);
-    }
+//
+//    @PostMapping(value = "/audit")
+//    public ResponseEntity<?> testAPIAudit(){
+//        return new ResponseEntity<>("Entered Audit API", HttpStatus.ACCEPTED);
+//    }
+//
+//    @PostMapping(value = "/wallet")
+//    public ResponseEntity<?> testAPIWallet(){
+//        return new ResponseEntity<>("Entered Wallet API", HttpStatus.ACCEPTED);
+//    }
 }

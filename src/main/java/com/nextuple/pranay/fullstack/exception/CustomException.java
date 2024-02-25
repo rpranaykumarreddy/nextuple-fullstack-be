@@ -19,4 +19,24 @@ public class CustomException extends ResponseEntityExceptionHandler {
         ErrorDetails errorDetails = new ErrorDetails("Validation Error",ex.getLocalizedMessage(), req.getDescription(false));
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
+    public static class EntityExistsException extends RuntimeException {
+        public EntityExistsException(String message) {
+            super(message);
+        }
+    }
+    @ExceptionHandler(EntityExistsException.class)
+    public ResponseEntity<?> handleEntityExistsException(Exception ex, WebRequest req){
+        ErrorDetails errorDetails = new ErrorDetails("Entity Exists",ex.getLocalizedMessage(), req.getDescription(false));
+        return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
+    }
+    public static class UnableToSaveException extends RuntimeException {
+        public UnableToSaveException(String message) {
+            super(message);
+        }
+    }
+    @ExceptionHandler(UnableToSaveException.class)
+    public ResponseEntity<?> handleUnableToSaveException(Exception ex, WebRequest req){
+        ErrorDetails errorDetails = new ErrorDetails("Unable to Save",ex.getLocalizedMessage(), req.getDescription(false));
+        return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }
