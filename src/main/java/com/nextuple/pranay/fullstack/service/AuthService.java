@@ -14,6 +14,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 public class AuthService {
     @Autowired
@@ -33,18 +35,39 @@ public class AuthService {
         if(usersRepo.existsByEmail(user.getEmail())){
             throw new RuntimeException("Email Exists");
         }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        usersRepo.save(user);
-        return new ResponseEntity<>(user, HttpStatus.CREATED);
+        Users userDB = new Users();
+        userDB.setUsername(user.getUsername());
+        userDB.setEmail(user.getEmail());
+        userDB.setPassword(passwordEncoder.encode(user.getPassword()));
+        userDB.setRoles("ROLE_USER");
+        userDB.setCreated(LocalDateTime.now());
+        usersRepo.save(userDB);
+        return new ResponseEntity<>(userDB, HttpStatus.CREATED);
     }
-
-    public ResponseEntity<?> login(LoginAuthRequest loginDto) {
+    public ResponseEntity<?> addAdmin(Users user){
+        System.out.println(user);
+        if(usersRepo.existsByUsername(user.getUsername())){
+            throw new RuntimeException("Username Exists");
+        }
+        if(usersRepo.existsByEmail(user.getEmail())){
+            throw new RuntimeException("Email Exists");
+        }
+        Users userDB = new Users();
+        userDB.setUsername(user.getUsername());
+        userDB.setEmail(user.getEmail());
+        userDB.setPassword(passwordEncoder.encode(user.getPassword()));
+        userDB.setRoles("ROLE_ADMIN, ROLE_USER");
+        userDB.setCreated(LocalDateTime.now());
+        usersRepo.save(userDB);
+        return new ResponseEntity<>(userDB, HttpStatus.CREATED);
+    }
+    public String login(LoginAuthRequest loginDto) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 loginDto.getUsername(),
                 loginDto.getPassword())
                 );
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String token = jwtTokenProvider.generateToken(authentication);
-        return new ResponseEntity<>(token,HttpStatus.ACCEPTED);
+        return token;
     }
 }

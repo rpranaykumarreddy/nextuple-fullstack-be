@@ -5,6 +5,7 @@ import com.nextuple.pranay.fullstack.security.JWTAuthenticationFilter;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -31,11 +32,13 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
-                .authorizeHttpRequests(authorize ->
-                        authorize
-                                .requestMatchers("/audit/**").hasRole("ADMIN")
-                                .requestMatchers("/wallet/**").authenticated()
-                                .anyRequest().permitAll()).httpBasic(Customizer.withDefaults());
+                .authorizeHttpRequests(authorize ->{
+                        authorize.requestMatchers("/audit/**").hasRole("ADMIN");
+                        authorize.requestMatchers("/wallet/**").authenticated();
+                        authorize.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
+                        authorize.anyRequest().permitAll();
+                })
+                .httpBasic(Customizer.withDefaults());
         http.exceptionHandling(expection->expection
                         .authenticationEntryPoint(jwtAuthenticationEntryPoint));
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
@@ -57,11 +60,11 @@ public class SecurityConfig {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
-    @Bean
-    public AuthenticationProvider authenticationProvider(){
-        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(userDetailsService);
-        authenticationProvider.setPasswordEncoder(passwordEncoder());
-        return  authenticationProvider;
-    }
+//    @Bean
+//    public AuthenticationProvider authenticationProvider(){
+//        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+//        authenticationProvider.setUserDetailsService(userDetailsService);
+//        authenticationProvider.setPasswordEncoder(passwordEncoder());
+//        return  authenticationProvider;
+//    }
 }
