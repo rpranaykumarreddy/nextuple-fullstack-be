@@ -1,6 +1,7 @@
 package com.nextuple.pranay.fullstack.controller;
 
 import com.nextuple.pranay.fullstack.dto.CheckBalanceResponse;
+import com.nextuple.pranay.fullstack.dto.ConfirmTeansactionRequest;
 import com.nextuple.pranay.fullstack.dto.CreateWalletResponse;
 import com.nextuple.pranay.fullstack.dto.InitTeansactionRequest;
 import com.nextuple.pranay.fullstack.service.TransactionService;
@@ -36,6 +37,11 @@ todo: Transaction Confirm: POST /transaction/confirm
     public ResponseEntity<?> initTransaction(@RequestHeader("Authorization") String token, @RequestBody InitTeansactionRequest request) {
         String userId = authUserUtils.getUserId(token);
         return transactionService.initTransaction(userId, request);
+    }
+    @PostMapping("/confirm")
+    public ResponseEntity<?> confirmTransaction(@RequestHeader("Authorization") String token, @RequestBody ConfirmTeansactionRequest request) {
+        String userId = authUserUtils.getUserId(token);
+        return transactionService.confirmTransaction(userId, request);
     }
 
     @PostMapping("/{walletId}/totp/confirm")
