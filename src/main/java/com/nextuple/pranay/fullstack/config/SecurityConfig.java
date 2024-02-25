@@ -34,10 +34,10 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize ->{
-                        authorize.requestMatchers("/audit/**").hasRole("ADMIN");
-                        authorize.requestMatchers("/wallet/**").authenticated();
-                        authorize.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
-                        authorize.anyRequest().permitAll();
+                    authorize.requestMatchers("/wallet/**").authenticated();
+                    authorize.requestMatchers("/recharge/**").authenticated();
+                    authorize.requestMatchers("/transaction/**").authenticated();
+                    authorize.anyRequest().permitAll();
                 })
                 .httpBasic(Customizer.withDefaults());
         http.exceptionHandling(expection->expection

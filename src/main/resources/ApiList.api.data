@@ -1,28 +1,31 @@
 API Endpoints:
 
-todo: User Registration: POST /auth/register
+User Registration: POST /auth/register
     returns: success message string or error message string
 
-todo: Admin Registration: POST /auth/admin/register
+Admin Registration: POST /auth/admin/register
     returns: success message string or error message string
 
-todo: Check Username Availability: GET /auth/check-username/{username}
-    returns: true or false
-
-todo: Login: POST /auth/login
+Login: POST /auth/login
     returns: token string or error message string
 
-todo: Create Wallet: POST /wallet/create
+Check Username Availability: GET /auth/check-username/{username}
+    returns: true or false
+
+Create Wallet: POST /wallet/create
     returns: success message string or error message string
 
-todo: Wallet TOTP Creation: POST /wallet/{WalletId}/totp
+Wallet Balance: GET /wallet/balance
+    returns: balance or error message string
+
+Wallet TOTP Creation: POST /wallet/{WalletId}/totp
     returns: QR Code Data URI or error message string
 
-todo: Wallet TOTP Confirmation: POST /wallet/{WalletId}/totp/confirm
+Wallet TOTP Confirmation: POST /wallet/{WalletId}/totp/confirm
     onError: delete secret from wallet
     returns: success message string or error message string
 
-todo: Recharge Wallet: POST /recharge
+Recharge Wallet: POST /recharge
     returns: success message string or error message string
 
 todo: Transaction Init: POST /transaction/init
@@ -33,8 +36,5 @@ todo: Transaction Confirm: POST /transaction/confirm
     verify TOTP or OTP & debit & credit the wallets
     returns: success message string or error message string
 
-Wallet Balance: GET /wallet/balance
-    returns: balance or error message string
-
-View Account Statement: GET /wallet/statement
+todo: View Account Statement: GET /wallet/statement
     returns: statement or error message string

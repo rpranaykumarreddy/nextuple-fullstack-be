@@ -2,7 +2,7 @@ package com.nextuple.pranay.fullstack.service;
 
 import com.nextuple.pranay.fullstack.dto.AddUserRequest;
 import com.nextuple.pranay.fullstack.dto.AddUserResponse;
-import com.nextuple.pranay.fullstack.dto.JWTAuthResponse;
+import com.nextuple.pranay.fullstack.dto.LoginAuthResponse;
 import com.nextuple.pranay.fullstack.dto.LoginAuthRequest;
 import com.nextuple.pranay.fullstack.exception.CustomException;
 import com.nextuple.pranay.fullstack.model.Users;
@@ -82,9 +82,13 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String token = jwtTokenProvider.generateToken(authentication);
 
-        JWTAuthResponse jwtAuthResponse = new JWTAuthResponse();
+        LoginAuthResponse jwtAuthResponse = new LoginAuthResponse();
         jwtAuthResponse.setAccessToken(token);
 
         return new ResponseEntity<>(jwtAuthResponse, HttpStatus.OK);
+    }
+
+    public ResponseEntity<Boolean> checkUsername(String username) {
+        return new ResponseEntity<>(usersRepo.existsByUsername(username), HttpStatus.OK);
     }
 }
