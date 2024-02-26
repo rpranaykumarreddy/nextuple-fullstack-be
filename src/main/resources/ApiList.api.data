@@ -22,19 +22,19 @@ Wallet TOTP Confirmation: POST /wallet/{WalletId}/totp/confirm
 todo: View Account Statement: GET /wallet/statement
     returns: statement or error message string
 
-todo: Recharge Wallet: POST /recharge
+Recharge Wallet: POST /recharge
     returns: success message string or error message string
 
-todo: Transaction Init: POST /transaction/init
+Transaction Init: POST /transaction/init
     verify the receiver wallet & sender's balance
     returns: Transaction ID or error message string
 
-todo: Check Username Availability: GET /transaction/check-wallet/{username}
+Check Username Availability: GET /transaction/check-wallet/{username}
     returns: true or false
 
-todo: Transaction Confirm: POST /transaction/confirm
+Transaction Confirm: POST /transaction/confirm
     verify TOTP or OTP & debit & credit the wallets or timeout
     returns: success message string or error message string
 
-todo: Transaction Cancel: POST /transaction/cancel
+Transaction Cancel: POST /transaction/cancel
     returns: success message string or error message string

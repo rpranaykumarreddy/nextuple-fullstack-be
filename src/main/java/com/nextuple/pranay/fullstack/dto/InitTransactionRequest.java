@@ -7,8 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class InitTeansactionRequest {
-    private String fromWalletId;
-    private String toWalletId;
+public class InitTransactionRequest {
+    private String to;
     private double amount;
 }

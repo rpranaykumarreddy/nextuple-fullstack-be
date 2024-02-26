@@ -1,9 +1,12 @@
 package com.nextuple.pranay.fullstack.controller;
 
+import com.nextuple.pranay.fullstack.dto.InitTransactionRequest;
+import com.nextuple.pranay.fullstack.dto.InitTransactionResponse;
 import com.nextuple.pranay.fullstack.service.TransactionService;
 import com.nextuple.pranay.fullstack.service.WalletService;
 import com.nextuple.pranay.fullstack.utils.AuthUserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin("*")
@@ -16,28 +19,25 @@ public class TransactionController {
     private WalletService walletService;
     @Autowired
     private AuthUserUtils authUserUtils;
-//
-//    @PostMapping("/init")
-//    public ResponseEntity<?> initTransaction(@RequestHeader("Authorization") String token, @RequestBody InitTeansactionRequest request) {
-//        String userId = authUserUtils.getUserId(token);
-//        return transactionService.initTransaction(userId, request);
-//    }
-//    @PostMapping("/confirm")
-//    public ResponseEntity<?> confirmTransaction(@RequestHeader("Authorization") String token, @RequestBody ConfirmTeansactionRequest request) {
-//        String userId = authUserUtils.getUserId(token);
-//        return transactionService.confirmTransaction(userId, request);
-//    }
-//
-//    @PostMapping("/{walletId}/totp/confirm")
-//    public ResponseEntity<?> confirmTotp(@PathVariable String walletId, @RequestHeader("Authorization") String token, @RequestParam String code) {
-//        String userId = authUserUtils.getUserId(token);
-//        return walletService.confirmTotp(walletId, userId, code);
-//    }
-//
-//    @PostMapping("/{tranactionId}/cancel")
-//    public ResponseEntity<?> cancelTransaction(@PathVariable String tranactionId, @RequestHeader("Authorization") String token) {
-//        String userId = authUserUtils.getUserId(token);
-//        return transactionService.cancelTransaction(userId, tranactionId);
-//    }
+
+    @GetMapping("/check-wallet/{username}")
+    public ResponseEntity<Boolean> checkWallet(@PathVariable String username){
+        return transactionService.checkUsername(username);
+    }
+    @PostMapping("/init")
+    public ResponseEntity<InitTransactionResponse> initTransaction(@RequestHeader("Authorization") String token, @RequestBody InitTransactionRequest request) {
+        String userId = authUserUtils.getUserId(token);
+        return transactionService.initTransaction(userId, request);
+    }
+    @PostMapping("/confirm/{transactionId}")
+    public ResponseEntity<?> confirmTransaction(@RequestHeader("Authorization") String token, @PathVariable String transactionId,@RequestParam String code) {
+        String userId = authUserUtils.getUserId(token);
+        return transactionService.confirmTransaction(userId, transactionId, code);
+    }
+    @PostMapping("/cancel/{tranactionId}")
+    public ResponseEntity<?> cancelTransaction(@PathVariable String tranactionId, @RequestHeader("Authorization") String token) {
+        String userId = authUserUtils.getUserId(token);
+        return transactionService.cancelTransaction(userId, tranactionId);
+    }
 
 }

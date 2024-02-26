@@ -8,4 +8,5 @@ import java.util.List;
 import java.util.Optional;
 
 public interface WalletsRepo extends MongoRepository<Wallets, String> {
+    Boolean existsByUsername(String username);
 }

@@ -29,7 +29,16 @@ public class CustomException extends ResponseEntityExceptionHandler {
         ErrorDetails errorDetails = new ErrorDetails("Unauthorized",ex.getLocalizedMessage(), req.getDescription(false));
         return new ResponseEntity<>(errorDetails, HttpStatus.UNAUTHORIZED);
     }
-
+    public static class BadRequestException extends RuntimeException {
+        public BadRequestException(String message) {
+            super(message);
+        }
+    }
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<?> handleBadRequestException(Exception ex, WebRequest req){
+        ErrorDetails errorDetails = new ErrorDetails("Bad Request",ex.getLocalizedMessage(), req.getDescription(false));
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
     public static class EntityNotFoundException extends RuntimeException {
         public EntityNotFoundException(String message) {
             super(message);
