@@ -2,7 +2,6 @@ package com.nextuple.pranay.fullstack.service;
 
 
 import com.nextuple.pranay.fullstack.dto.ConfirmTeansactionRequest;
-import com.nextuple.pranay.fullstack.dto.InitTeansactionRequest;
 import com.nextuple.pranay.fullstack.model.Transactions;
 import com.nextuple.pranay.fullstack.model.Wallets;
 import com.nextuple.pranay.fullstack.repo.TransactionsRepo;

@@ -1,5 +1,6 @@
 package com.nextuple.pranay.fullstack.utils;
 
+import com.nextuple.pranay.fullstack.exception.CustomException;
 import com.nextuple.pranay.fullstack.model.Users;
 import com.nextuple.pranay.fullstack.repo.UsersRepo;
 import com.nextuple.pranay.fullstack.security.JWTTokenProvider;
@@ -20,14 +21,14 @@ public class AuthUserUtils {
                 String username = jwtTokenProvider.getUsername(token);
                 // Create Wallet
                 Users user = usersRepo.findByUsernameOrEmail(username,username).orElseThrow(
-                        () -> new RuntimeException("User not found")
+                        () -> new CustomException.EntityNotFoundException("User not found")
                 );
                 return user.getUsername();
             }else{
-                throw new RuntimeException("Token is not valid");
+                throw new CustomException.UnauthorizedException("Token is not valid");
             }
         }else{
-            throw new RuntimeException("Token is not valid");
+            throw new CustomException.UnauthorizedException("Token is not valid");
         }
     }
 }

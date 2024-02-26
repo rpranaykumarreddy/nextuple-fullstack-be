@@ -13,14 +13,15 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GetWalletDetailsResponse {
-    LocalDateTime responseTime = LocalDateTime.now(); private String id;
+    LocalDateTime responseTime = LocalDateTime.now();
     private double balance;
+    private boolean totpEnabled;
     private LocalDateTime updated;
     private LocalDateTime created;
 
     public void copyWallets(Wallets wallets) {
-        this.id = wallets.getUsername();
         this.balance = wallets.getBalance();
+        this.totpEnabled = wallets.isTotpEnabled();
         this.updated = wallets.getUpdated();
         this.created = wallets.getCreated();
     }

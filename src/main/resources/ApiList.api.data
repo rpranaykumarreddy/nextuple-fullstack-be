@@ -9,13 +9,13 @@ Login: POST /auth/login
 Check Username Availability: GET /auth/check-username/{username}
     returns: true or false
 
-todo: Wallet Details: GET /Wallet/details
+Wallet Details: GET /Wallet/details
     returns: user details or error message string
 
-todo: Wallet TOTP Creation: POST /wallet/{WalletId}/totp
+Wallet TOTP Creation: POST /wallet/{WalletId}/totp
     returns: QR Code Data URI or error message string
 
-todo: Wallet TOTP Confirmation: POST /wallet/{WalletId}/totp/confirm
+Wallet TOTP Confirmation: POST /wallet/{WalletId}/totp/confirm
     onError: delete secret from wallet
     returns: success message string or error message string
 

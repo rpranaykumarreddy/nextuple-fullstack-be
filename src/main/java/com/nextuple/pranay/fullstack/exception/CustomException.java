@@ -19,6 +19,17 @@ public class CustomException extends ResponseEntityExceptionHandler {
         ErrorDetails errorDetails = new ErrorDetails("Validation Error",ex.getLocalizedMessage(), req.getDescription(false));
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
+    public static class UnauthorizedException extends RuntimeException {
+        public UnauthorizedException(String message) {
+            super(message);
+        }
+    }
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<?> handleUnauthorizedException(Exception ex, WebRequest req){
+        ErrorDetails errorDetails = new ErrorDetails("Unauthorized",ex.getLocalizedMessage(), req.getDescription(false));
+        return new ResponseEntity<>(errorDetails, HttpStatus.UNAUTHORIZED);
+    }
+
     public static class EntityNotFoundException extends RuntimeException {
         public EntityNotFoundException(String message) {
             super(message);
