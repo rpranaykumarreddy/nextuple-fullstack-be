@@ -14,10 +14,10 @@ import java.time.LocalDateTime;
 @Document(collection = "wallets")
 public class Wallets {
     @Id
-    private String id;
+    private String username;
     private double balance;
-    private String userId;
     private String secretKey;
+    private boolean totpEnabled;
     private LocalDateTime updated;
     private LocalDateTime created;
 }

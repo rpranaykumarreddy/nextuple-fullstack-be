@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
 @Document(collection = "users")
 public class Users {
     @Id
-    private String id;
     private String username;
     private String email;
     private String password;

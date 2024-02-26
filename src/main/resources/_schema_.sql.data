@@ -1,50 +1,35 @@
-CREATE TABLE `users` (
-	`id` varchar NOT NULL UNIQUE,
-	`username` varchar NOT NULL UNIQUE,
-	`email` varchar NOT NULL UNIQUE,
-	`password` varchar NOT NULL,
-	`created` TIMESTAMP NOT NULL,
-	PRIMARY KEY (`id`)
-);
 
-CREATE TABLE `transactions` (
-	`id` varchar NOT NULL UNIQUE,
-	`fromWid` varchar NOT NULL,
-	`toWid` varchar NOT NULL,
-	`amount` FLOAT NOT NULL,
-	`status` enum NOT NULL,
-	`created` TIMESTAMP NOT NULL,
-	PRIMARY KEY (`id`)
-);
+users {
+	username varchar pk unique
+	email varchar unique
+	password varchar
+	roles varchar
+	created timestamp
+}
 
-CREATE TABLE `wallets` (
-	`id` varchar NOT NULL UNIQUE,
-	`amount` FLOAT NOT NULL,
-	`uid` varchar NOT NULL,
-	`secret` varchar NOT NULL,
-	`updated` TIMESTAMP NOT NULL,
-	`created` TIMESTAMP NOT NULL,
-	PRIMARY KEY (`id`)
-);
-
-CREATE TABLE `recharge` (
-	`id` varchar NOT NULL UNIQUE,
-	`amount` FLOAT NOT NULL,
-	`cashback` FLOAT NOT NULL,
-	`wid` varchar NOT NULL,
-	`created` TIMESTAMP NOT NULL,
-	PRIMARY KEY (`id`)
-);
-
-ALTER TABLE `transactions` ADD CONSTRAINT `transactions_fk0` FOREIGN KEY (`fromWid`) REFERENCES `wallets`(`id`);
-
-ALTER TABLE `transactions` ADD CONSTRAINT `transactions_fk1` FOREIGN KEY (`toWid`) REFERENCES `wallets`(`id`);
-
-ALTER TABLE `wallets` ADD CONSTRAINT `wallets_fk0` FOREIGN KEY (`uid`) REFERENCES `users`(`id`);
-
-ALTER TABLE `recharge` ADD CONSTRAINT `recharge_fk0` FOREIGN KEY (`wid`) REFERENCES `wallets`(`id`);
+wallets {
+	username varchar pk unique > users.username
+	balance float
+	secretKey varchar
+	totpEnabled boolean
+	updated timestamp
+	created timestamp
+}
 
 
+transactions {
+	id varchar pk unique
+	fromUId varchar *> users.username
+	toUId varchar *> users.username
+	amount float
+	status enum
+	created timestamp
+}
 
-
-
+recharge {
+	id varchar pk unique
+	amount float
+	cashback float
+	uId varchar *> users.username
+	created timestamp
+}

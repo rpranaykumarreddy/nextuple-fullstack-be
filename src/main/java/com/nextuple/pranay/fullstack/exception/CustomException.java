@@ -19,6 +19,16 @@ public class CustomException extends ResponseEntityExceptionHandler {
         ErrorDetails errorDetails = new ErrorDetails("Validation Error",ex.getLocalizedMessage(), req.getDescription(false));
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
+    public static class EntityNotFoundException extends RuntimeException {
+        public EntityNotFoundException(String message) {
+            super(message);
+        }
+    }
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<?> handleEntityNotFoundException(Exception ex, WebRequest req){
+        ErrorDetails errorDetails = new ErrorDetails("Entity Not Found",ex.getLocalizedMessage(), req.getDescription(false));
+        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+    }
     public static class EntityExistsException extends RuntimeException {
         public EntityExistsException(String message) {
             super(message);
@@ -39,4 +49,5 @@ public class CustomException extends ResponseEntityExceptionHandler {
         ErrorDetails errorDetails = new ErrorDetails("Unable to Save",ex.getLocalizedMessage(), req.getDescription(false));
         return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
 }

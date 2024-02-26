@@ -17,6 +17,6 @@ public class Recharges {
     private String id;
     private double amount;
     private double cashback;
-    private String walletId;
+    private String uId;
     private LocalDateTime created;
 }

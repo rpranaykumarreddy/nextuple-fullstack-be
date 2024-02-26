@@ -2,6 +2,7 @@ package com.nextuple.pranay.fullstack.controller;
 
 import com.nextuple.pranay.fullstack.dto.AddUserRequest;
 import com.nextuple.pranay.fullstack.dto.LoginAuthRequest;
+import com.nextuple.pranay.fullstack.dto.LoginAuthResponse;
 import com.nextuple.pranay.fullstack.service.AuthService;
 import dev.samstevens.totp.secret.DefaultSecretGenerator;
 import dev.samstevens.totp.secret.SecretGenerator;
@@ -18,19 +19,13 @@ public class AuthController {
     AuthService authService;
 
     @PostMapping(value = "/register")
-    public ResponseEntity<?> addNewUser(@RequestBody AddUserRequest addUserRequest){
+    public ResponseEntity<String> addNewUser(@RequestBody AddUserRequest addUserRequest){
         addUserRequest.validate();
         return authService.addUser(addUserRequest);
     }
 
-    @PostMapping(value = "/admin/register")
-    public ResponseEntity<?> addNewAdmin(@RequestBody  AddUserRequest addUserRequest){
-        addUserRequest.validate();
-        return authService.addAdmin(addUserRequest);
-    }
-
     @PostMapping(value = "/login")
-    public ResponseEntity<?> login(@RequestBody LoginAuthRequest loginDto){
+    public ResponseEntity<LoginAuthResponse> login(@RequestBody LoginAuthRequest loginDto){
         loginDto.validate();
         return authService.login(loginDto);
     }

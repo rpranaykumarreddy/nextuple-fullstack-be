@@ -15,33 +15,33 @@ import java.time.LocalDateTime;
 
 @Service
 public class RechargeService {
-    @Autowired
-    private RechargesRepo rechargesRepo;
-    @Autowired
-    private WalletsRepo walletsRepo;
-@Transactional
-    public RechargeWalletResponse rechargeWallet(String userId, RechargeWalletRequest rechargeWalletRequest) {
-    double amount = rechargeWalletRequest.getAmount();
-    String walletId = rechargeWalletRequest.getWalletId();
-    Wallets wallet = walletsRepo.findById(walletId).orElseThrow(() -> new RuntimeException("Wallet not found"));
-    if(!wallet.getUserId().equals(userId)){
-            throw new RuntimeException("Unauthorized");
-        }
-        double cashback = Math.ceil(Math.random()*amount*0.01);
-        Recharges recharge = new Recharges();
-        recharge.setAmount(amount);
-        recharge.setWalletId(walletId);
-        recharge.setCreated(LocalDateTime.now());
-        recharge.setCashback(cashback);
-        wallet.setBalance(wallet.getBalance()+ amount + cashback);
-        wallet.setUpdated(LocalDateTime.now());
-        try {
-            rechargesRepo.save(recharge);
-            walletsRepo.save(wallet);
-        } catch (Exception e) {
-            throw new RuntimeException("Unable to recharge");
-        }
-        return new RechargeWalletResponse("Recharge Successful",wallet.getBalance());
-    }
+//    @Autowired
+//    private RechargesRepo rechargesRepo;
+//    @Autowired
+//    private WalletsRepo walletsRepo;
+//@Transactional
+//    public RechargeWalletResponse rechargeWallet(String userId, RechargeWalletRequest rechargeWalletRequest) {
+//    double amount = rechargeWalletRequest.getAmount();
+//    String walletId = rechargeWalletRequest.getWalletId();
+//    Wallets wallet = walletsRepo.findById(walletId).orElseThrow(() -> new RuntimeException("Wallet not found"));
+//    if(!wallet.getUserId().equals(userId)){
+//            throw new RuntimeException("Unauthorized");
+//        }
+//        double cashback = Math.ceil(Math.random()*amount*0.01);
+//        Recharges recharge = new Recharges();
+//        recharge.setAmount(amount);
+//        recharge.setWalletId(walletId);
+//        recharge.setCreated(LocalDateTime.now());
+//        recharge.setCashback(cashback);
+//        wallet.setBalance(wallet.getBalance()+ amount + cashback);
+//        wallet.setUpdated(LocalDateTime.now());
+//        try {
+//            rechargesRepo.save(recharge);
+//            walletsRepo.save(wallet);
+//        } catch (Exception e) {
+//            throw new RuntimeException("Unable to recharge");
+//        }
+//        return new RechargeWalletResponse("Recharge Successful",wallet.getBalance());
+//    }
 
 }
