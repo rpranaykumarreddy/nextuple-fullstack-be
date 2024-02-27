@@ -17,6 +17,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.time.LocalDateTime;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
@@ -41,6 +43,10 @@ public class WalletServiceTests {
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         GetWalletDetailsResponse getWalletDetailsResponse = (GetWalletDetailsResponse) responseEntity.getBody();
         assertEquals(TestUtil.WalletTestData.USER1_BALANCE_INIT, getWalletDetailsResponse.getBalance());
+        assertEquals(false, getWalletDetailsResponse.isTotpEnabled());
+        assertEquals(LocalDateTime.class, getWalletDetailsResponse.getResponseTime().getClass());
+        assertEquals(LocalDateTime.class, getWalletDetailsResponse.getUpdated().getClass());
+        assertEquals(LocalDateTime.class, getWalletDetailsResponse.getCreated().getClass());
         verify(walletsRepo, times(1)).findById(TestUtil.USER1_NAME);
     }
     @Test
@@ -138,7 +144,7 @@ public class WalletServiceTests {
         assertEquals(expectedResponse.getRecharges(),responseEntity.getBody().getRecharges());
         assertEquals(expectedResponse.getCredits(),responseEntity.getBody().getCredits());
         assertEquals(expectedResponse.getDebits(),responseEntity.getBody().getDebits());
-        assertEquals(expectedResponse.getResponseTime().getClass(),responseEntity.getBody().getResponseTime().getClass());
+        assertEquals(LocalDateTime.class,responseEntity.getBody().getResponseTime().getClass());
     }
     @Test
     public void testGetStatement_EntityNotFoundException() {

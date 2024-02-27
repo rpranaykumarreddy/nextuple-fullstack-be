@@ -1,8 +1,6 @@
 package com.nextuple.pranay.fullstack.security;
 
 import com.nextuple.pranay.fullstack.exception.CustomException;
-import com.nextuple.pranay.fullstack.model.Users;
-import com.nextuple.pranay.fullstack.model.Wallets;
 import com.nextuple.pranay.fullstack.repo.UsersRepo;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
@@ -16,7 +14,6 @@ import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
-import java.util.Optional;
 
 @Component
 public class JWTTokenProvider {
@@ -50,8 +47,7 @@ public class JWTTokenProvider {
                 .setSigningKey(key())
                 .build()
                 .parseClaimsJws(token).getBody();
-        String username= claims.getSubject();
-        return username;
+        return claims.getSubject();
     }
 
     public boolean validateToken(String token) {

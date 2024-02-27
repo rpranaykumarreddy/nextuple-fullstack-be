@@ -6,8 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,7 +21,7 @@ public class AddUserRequest {
         if (email == null || email.isEmpty()) {
             throw new CustomException.ValidationException("Email cannot be empty");
         }
-        if(email == null || !email.contains("@") || !email.contains(".") || email.indexOf("@") > email.lastIndexOf(".")){
+        if(!email.contains("@") || !email.contains(".") || email.indexOf("@") > email.lastIndexOf(".")){
             throw new CustomException.ValidationException("Invalid Email");
         }
         if (password == null || password.isEmpty()) {

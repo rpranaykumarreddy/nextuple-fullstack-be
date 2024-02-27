@@ -17,19 +17,20 @@ public class WalletController {
     private WalletService walletService;
     @Autowired
     private AuthUserUtils authUserUtils;
+
     @GetMapping("/details")
     public ResponseEntity<GetWalletDetailsResponse> getWalletDetails(@RequestHeader("Authorization") String token) {
         String userId = authUserUtils.getUserId(token);
         return walletService.getWalletDetails(userId);
     }
     @PostMapping("/totp")
-    public ResponseEntity<?> createTotp(@RequestHeader("Authorization") String token) throws QrGenerationException {
+    public ResponseEntity<String> createTotp(@RequestHeader("Authorization") String token) throws QrGenerationException {
         String userId = authUserUtils.getUserId(token);
         return walletService.createTotp(userId);
     }
 
     @PostMapping("/totp/confirm")
-    public ResponseEntity<?> confirmTotp( @RequestHeader("Authorization") String token, @RequestParam String code) {
+    public ResponseEntity<Boolean> confirmTotp(@RequestHeader("Authorization") String token, @RequestParam String code) {
         String userId = authUserUtils.getUserId(token);
         return walletService.confirmTotp( userId, code);
     }

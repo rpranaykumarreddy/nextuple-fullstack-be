@@ -1,5 +1,6 @@
 package com.nextuple.pranay.fullstack.dto;
 
+import com.nextuple.pranay.fullstack.exception.CustomException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,10 +16,10 @@ public class LoginAuthRequest {
 
     public void validate() {
         if (username == null || username.isEmpty()) {
-            throw new IllegalArgumentException("Username or email cannot be empty");
+            throw new CustomException.ValidationException("Username cannot be empty");
         }
         if (password == null || password.isEmpty()) {
-            throw new IllegalArgumentException("Password cannot be empty");
+            throw new CustomException.ValidationException("Password cannot be empty");
         }
     }
 }

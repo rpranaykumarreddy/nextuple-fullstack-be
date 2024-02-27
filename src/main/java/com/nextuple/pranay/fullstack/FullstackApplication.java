@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 public class FullstackApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(FullstackApplication.class, args);
-		System.out.println("Testing");
+		System.out.println("Server Started...");
 	}
 
 }

@@ -21,16 +21,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.net.URI;
-import java.util.Optional;
-
-
 @Service
 public class TransactionService {
     @Autowired
     private TransactionsRepo transactionsRepo;
     @Autowired
     private WalletsRepo walletsRepo;
+
+    TimeProvider timeProvider = new SystemTimeProvider();
+    CodeGenerator codeGenerator = new DefaultCodeGenerator();
+    CodeVerifier verifier = new DefaultCodeVerifier(codeGenerator, timeProvider);
     public ResponseEntity<Boolean> checkUsername(String username) {
         return new ResponseEntity<>(walletsRepo.existsByUsername(username), HttpStatus.OK);
     }
@@ -61,7 +61,7 @@ public class TransactionService {
         transaction.setStatus(Transactions.TransactionStatus.INIT);
         transaction.setCreated(java.time.LocalDateTime.now());
         try{
-                transactionsRepo.save(transaction);
+            transactionsRepo.save(transaction);
         }catch (Exception e){
             throw new CustomException.UnableToSaveException("Unable to save transaction");
         }
@@ -71,10 +71,9 @@ public class TransactionService {
     }
 
     @Transactional
-    public ResponseEntity<?> confirmTransaction(String userId, String transactionId, String code) {
+    public ResponseEntity<GetWalletDetailsResponse> confirmTransaction(String userId, String transactionId, String code) {
         Transactions transaction = transactionsRepo.findById(transactionId).orElseThrow(
-                () -> new CustomException.EntityNotFoundException("Transaction not found")
-        );
+                () -> new CustomException.EntityNotFoundException("Transaction not found"));
         if (!transaction.getFromUId().equals(userId)) {
             throw new CustomException.UnauthorizedException("Unauthorized");
         }
@@ -104,9 +103,6 @@ public class TransactionService {
         }
         if(fromWallet.isTotpEnabled() && !fromWallet.getSecretKey().isEmpty()){
             String secret = fromWallet.getSecretKey();
-            TimeProvider timeProvider = new SystemTimeProvider();
-            CodeGenerator codeGenerator = new DefaultCodeGenerator();
-            CodeVerifier verifier = new DefaultCodeVerifier(codeGenerator, timeProvider);
             boolean successful = verifier.isValidCode(secret, code);
             if (!successful) {
                 throw new CustomException.BadRequestException("Invalid code");
@@ -126,7 +122,7 @@ public class TransactionService {
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
-    public ResponseEntity<?> cancelTransaction(String userId, String tranactionId) {
+    public ResponseEntity<String> cancelTransaction(String userId, String tranactionId) {
         Transactions transaction = transactionsRepo.findById(tranactionId).orElseThrow(
                 () -> new CustomException.EntityNotFoundException("Transaction not found")
         );

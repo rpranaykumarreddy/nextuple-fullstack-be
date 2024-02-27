@@ -16,7 +16,7 @@ public class AuthUserUtils {
     private UsersRepo usersRepo;
     public String getUserId(String token){
         if(StringUtils.hasText(token) && token.startsWith("Bearer ")){
-            token = token.substring(7, token.length());
+            token = token.substring(7);
             if(jwtTokenProvider.validateToken(token)){
                 String username = jwtTokenProvider.getUsername(token);
                 // Create Wallet

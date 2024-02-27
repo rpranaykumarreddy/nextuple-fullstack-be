@@ -24,7 +24,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -49,7 +48,7 @@ public class WalletService {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ResponseEntity<?> createTotp(String userId) throws QrGenerationException {
+    public ResponseEntity<String> createTotp(String userId) throws QrGenerationException {
         SecretGenerator secretGenerator = new DefaultSecretGenerator();
         String secret = secretGenerator.generate();
         Wallets wallet = walletsRepo.findById(userId).orElseThrow(
@@ -80,7 +79,7 @@ public class WalletService {
         return new ResponseEntity<>(dataUri, HttpStatus.CREATED);
     }
 
-    public ResponseEntity<?> confirmTotp(String userId, String code) {
+    public ResponseEntity<Boolean> confirmTotp(String userId, String code) {
         Wallets wallet = walletsRepo.findById(userId).orElseThrow(
                 ()->new CustomException.EntityNotFoundException("Wallet not found")
         );
@@ -99,7 +98,7 @@ public class WalletService {
             } catch (Exception e) {
                 throw new CustomException.UnableToSaveException("Unable to save");
             }
-            return new ResponseEntity<>(successful, HttpStatus.CREATED);
+            return new ResponseEntity<>(true, HttpStatus.CREATED);
         }else{
             throw new CustomException.ValidationException("Invalid code");
         }

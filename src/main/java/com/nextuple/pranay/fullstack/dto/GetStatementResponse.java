@@ -16,6 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 public class GetStatementResponse {
     LocalDateTime responseTime = LocalDateTime.now();
+    GetWalletDetailsResponse wallet = new GetWalletDetailsResponse();
     List<CreditDetails> credits= new ArrayList<>();
     List<DebitDetails> debits= new ArrayList<>();
     List<RechargesDetails> recharges= new ArrayList<>();
@@ -86,6 +87,7 @@ public class GetStatementResponse {
     }
 
     public GetStatementResponse(Wallets wallet, List<Transactions> fromTransactions, List<Transactions> toTransactions, List<Recharges> recharges) {
+        this.wallet = new GetWalletDetailsResponse(wallet);
         List<CreditDetails> credits = new ArrayList<>();
         List<DebitDetails> debits = new ArrayList<>();
         List<RechargesDetails> rechargesDetails = new ArrayList<>();

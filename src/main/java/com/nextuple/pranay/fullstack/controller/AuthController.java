@@ -4,8 +4,6 @@ import com.nextuple.pranay.fullstack.dto.AddUserRequest;
 import com.nextuple.pranay.fullstack.dto.LoginAuthRequest;
 import com.nextuple.pranay.fullstack.dto.LoginAuthResponse;
 import com.nextuple.pranay.fullstack.service.AuthService;
-import dev.samstevens.totp.secret.DefaultSecretGenerator;
-import dev.samstevens.totp.secret.SecretGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
