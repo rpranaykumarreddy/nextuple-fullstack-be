@@ -19,22 +19,22 @@ Wallet TOTP Confirmation: POST /wallet/{WalletId}/totp/confirm
     onError: delete secret from wallet
     returns: success message string or error message string
 
-todo: View Account Statement: GET /wallet/statement
+View Account Statement: GET /wallet/statement
     returns: statement or error message string
 
 Recharge Wallet: POST /recharge
-    returns: success message string or error message string
+    returns: Wallet
 
 Transaction Init: POST /transaction/init
     verify the receiver wallet & sender's balance
-    returns: Transaction ID or error message string
+    returns: Transaction Details or error message string
 
 Check Username Availability: GET /transaction/check-wallet/{username}
     returns: true or false
 
 Transaction Confirm: POST /transaction/confirm
     verify TOTP or OTP & debit & credit the wallets or timeout
-    returns: success message string or error message string
+    returns: Wallet details or error message string
 
 Transaction Cancel: POST /transaction/cancel
     returns: success message string or error message string

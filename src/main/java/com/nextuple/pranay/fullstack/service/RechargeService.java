@@ -44,8 +44,7 @@ public class RechargeService {
         } catch (Exception e) {
             throw new CustomException.UnableToSaveException("Unable to save recharge");
         }
-        GetWalletDetailsResponse response = new GetWalletDetailsResponse();
-        response.copyWallets(wallet);
+        GetWalletDetailsResponse response = new GetWalletDetailsResponse(wallet);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

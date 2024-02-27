@@ -1,6 +1,7 @@
 package com.nextuple.pranay.fullstack.service;
 
 
+import com.nextuple.pranay.fullstack.dto.GetWalletDetailsResponse;
 import com.nextuple.pranay.fullstack.dto.InitTransactionRequest;
 import com.nextuple.pranay.fullstack.dto.InitTransactionResponse;
 import com.nextuple.pranay.fullstack.exception.CustomException;
@@ -121,7 +122,8 @@ public class TransactionService {
         }catch (Exception e){
             throw new CustomException.UnableToSaveException("Unable to save transaction");
         }
-        return ResponseEntity.ok("Transaction successful");
+        GetWalletDetailsResponse response = new GetWalletDetailsResponse(fromWallet);
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
     public ResponseEntity<?> cancelTransaction(String userId, String tranactionId) {

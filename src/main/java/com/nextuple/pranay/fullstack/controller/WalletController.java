@@ -1,5 +1,6 @@
 package com.nextuple.pranay.fullstack.controller;
 
+import com.nextuple.pranay.fullstack.dto.GetStatementResponse;
 import com.nextuple.pranay.fullstack.dto.GetWalletDetailsResponse;
 import com.nextuple.pranay.fullstack.service.WalletService;
 import com.nextuple.pranay.fullstack.utils.AuthUserUtils;
@@ -33,9 +34,9 @@ public class WalletController {
         return walletService.confirmTotp( userId, code);
     }
 
-//    @GetMapping("/statement")
-//    public ResponseEntity<GetStatementResponse> getStatement(@RequestHeader("Authorization") String token) {
-//        String userId = authUserUtils.getUserId(token);
-//        return walletService.getStatement(userId);
-//    }
+    @GetMapping("/statement")
+    public ResponseEntity<GetStatementResponse> getStatement(@RequestHeader("Authorization") String token) {
+        String userId = authUserUtils.getUserId(token);
+        return walletService.getStatement(userId);
+    }
 }

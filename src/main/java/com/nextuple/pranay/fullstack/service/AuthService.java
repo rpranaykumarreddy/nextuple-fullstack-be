@@ -47,10 +47,6 @@ public class AuthService {
         userDB.setRoles("ROLE_USER");
         userDB.setCreated(LocalDateTime.now());
         Wallets wallet = new Wallets(userDB.getUsername(), 0.0, null,false, LocalDateTime.now(), LocalDateTime.now());
-        try {
-        } catch (Exception e) {
-            throw new RuntimeException("Unable to create wallet");
-        }
         Users userResponse;
         try {
             userResponse=usersRepo.save(userDB);

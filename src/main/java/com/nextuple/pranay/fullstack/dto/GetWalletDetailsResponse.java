@@ -19,7 +19,7 @@ public class GetWalletDetailsResponse {
     private LocalDateTime updated;
     private LocalDateTime created;
 
-    public void copyWallets(Wallets wallets) {
+    public GetWalletDetailsResponse(Wallets wallets) {
         this.balance = wallets.getBalance();
         this.totpEnabled = wallets.isTotpEnabled();
         this.updated = wallets.getUpdated();
