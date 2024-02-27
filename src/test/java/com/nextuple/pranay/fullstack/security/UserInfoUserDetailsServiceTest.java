@@ -2,11 +2,9 @@ package com.nextuple.pranay.fullstack.security;
 
 import com.nextuple.pranay.fullstack.model.Users;
 import com.nextuple.pranay.fullstack.repo.UsersRepo;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,11 +22,6 @@ public class UserInfoUserDetailsServiceTest {
 
     @InjectMocks
     private UserInfoUserDetailsService userInfoUserDetailsService;
-
-    @BeforeEach
-    public void setup() {
-        MockitoAnnotations.openMocks(this);
-    }
 
     @Test
     public void testLoadUserByUsername() {

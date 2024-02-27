@@ -38,16 +38,12 @@ public class AuthUserUtilsTests {
         when(jwtTokenProvider.getUsername(any())).thenReturn(TestUtil.USER1_NAME);
         when(usersRepo.findByUsernameOrEmail(TestUtil.USER1_NAME, TestUtil.USER1_NAME))
                 .thenReturn(Optional.empty());
-        assertThrows(CustomException.EntityNotFoundException.class, () -> {
-            authUserUtils.getUserId(TestUtil.TOKEN);
-        });
+        assertThrows(CustomException.EntityNotFoundException.class, () -> authUserUtils.getUserId(TestUtil.TOKEN));
     }
     @Test
     public void testGetUserId_UnauthorizedException() {
         when(jwtTokenProvider.validateToken(any())).thenReturn(false);
-        assertThrows(CustomException.UnauthorizedException.class, () -> {
-            authUserUtils.getUserId(TestUtil.TOKEN);
-        });
+        assertThrows(CustomException.UnauthorizedException.class, () -> authUserUtils.getUserId(TestUtil.TOKEN));
     }
     @Test
     public void testGetUserId_UnauthorizedException2() {
@@ -55,9 +51,7 @@ public class AuthUserUtilsTests {
         when(jwtTokenProvider.getUsername(any())).thenReturn(TestUtil.USER1_NAME);
         when(usersRepo.findByUsernameOrEmail(TestUtil.USER1_NAME, TestUtil.USER1_NAME))
                 .thenReturn(Optional.of(TestUtil.UserTestData.getUser1Response()));
-        assertThrows(CustomException.UnauthorizedException.class, () -> {
-            authUserUtils.getUserId("Invalid token");
-        });
+        assertThrows(CustomException.UnauthorizedException.class, () -> authUserUtils.getUserId("Invalid token"));
     }
     @Test
     public void testGetUserId_UnauthorizedException3() {
@@ -65,35 +59,8 @@ public class AuthUserUtilsTests {
         when(jwtTokenProvider.getUsername(any())).thenReturn(TestUtil.USER1_NAME);
         when(usersRepo.findByUsernameOrEmail(TestUtil.USER1_NAME, TestUtil.USER1_NAME))
                 .thenReturn(Optional.of(TestUtil.UserTestData.getUser1Response()));
-        assertThrows(CustomException.UnauthorizedException.class, () -> {
-            authUserUtils.getUserId("Bear");
-        });
+        assertThrows(CustomException.UnauthorizedException.class, () -> authUserUtils.getUserId("Bear"));
     }
 
 
-//    @Test
-//    public void testRechargeWallet_Success() {
-//        when(walletsRepo.findById(TestUtil.USER1_NAME))
-//                .thenReturn(Optional.of(TestUtil.WalletTestData.getWallet1Response()));
-//        ResponseEntity<GetWalletDetailsResponse> responseEntity = rechargeService.rechargeWallet(TestUtil.USER1_NAME, 1000.0);
-//        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-//        GetWalletDetailsResponse getWalletDetailsResponse = (GetWalletDetailsResponse) responseEntity.getBody();
-//        assert(getWalletDetailsResponse.getBalance() > 1000.0);
-//        verify(walletsRepo, times(1)).findById(TestUtil.USER1_NAME);
-//    }
-//    @Test
-//    public void testRechargeWallet_EntityNotFoundException() {
-//        when(walletsRepo.findById(TestUtil.USER1_NAME)).thenReturn(Optional.empty());
-//        assertThrows(CustomException.EntityNotFoundException.class, () -> {
-//            rechargeService.rechargeWallet(TestUtil.USER1_NAME, 1000.0);
-//        });
-//    }
-//    @Test
-//    public void testRechargeWallet_SaveNotSuccessfulException() {
-//        when(walletsRepo.findById(TestUtil.USER1_NAME)).thenReturn(Optional.of(TestUtil.WalletTestData.getWallet1Response()));
-//        when(rechargesRepo.save(any())).thenThrow(new RuntimeException("A database error"));
-//        assertThrows(CustomException.UnableToSaveException.class, () -> {
-//            rechargeService.rechargeWallet(TestUtil.USER1_NAME, 1000.0);
-//        });
-//    }
 }

@@ -18,9 +18,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
@@ -41,9 +41,10 @@ public class WalletServiceTests {
         when(walletsRepo.findById(TestUtil.USER1_NAME)).thenReturn(java.util.Optional.of(TestUtil.WalletTestData.getWallet1Response()));
         ResponseEntity<GetWalletDetailsResponse> responseEntity = walletService.getWalletDetails(TestUtil.USER1_NAME);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        GetWalletDetailsResponse getWalletDetailsResponse = (GetWalletDetailsResponse) responseEntity.getBody();
+        GetWalletDetailsResponse getWalletDetailsResponse = responseEntity.getBody();
+        assert getWalletDetailsResponse != null;
         assertEquals(TestUtil.WalletTestData.USER1_BALANCE_INIT, getWalletDetailsResponse.getBalance());
-        assertEquals(false, getWalletDetailsResponse.isTotpEnabled());
+        assertFalse(getWalletDetailsResponse.isTotpEnabled());
         assertEquals(LocalDateTime.class, getWalletDetailsResponse.getResponseTime().getClass());
         assertEquals(LocalDateTime.class, getWalletDetailsResponse.getUpdated().getClass());
         assertEquals(LocalDateTime.class, getWalletDetailsResponse.getCreated().getClass());
@@ -52,9 +53,7 @@ public class WalletServiceTests {
     @Test
     public void testGetWalletDetails_EntityNotFoundException() {
         when(walletsRepo.findById(TestUtil.USER1_NAME)).thenReturn(java.util.Optional.empty());
-        assertThrows(CustomException.EntityNotFoundException.class, () -> {
-            walletService.getWalletDetails(TestUtil.USER1_NAME);
-        });
+        assertThrows(CustomException.EntityNotFoundException.class, () -> walletService.getWalletDetails(TestUtil.USER1_NAME));
     }
     @Test
     public void testCreateTotp_Success() throws QrGenerationException {
@@ -67,24 +66,18 @@ public class WalletServiceTests {
     @Test
     public void testCreateTotp_EntityNotFoundException() {
         when(walletsRepo.findById(TestUtil.USER1_NAME)).thenReturn(java.util.Optional.empty());
-        assertThrows(CustomException.EntityNotFoundException.class, () -> {
-            walletService.createTotp(TestUtil.USER1_NAME);
-        });
+        assertThrows(CustomException.EntityNotFoundException.class, () -> walletService.createTotp(TestUtil.USER1_NAME));
     }
     @Test
     public void testCreateTotp_ValidationException() {
         when(walletsRepo.findById(TestUtil.USER1_NAME)).thenReturn(java.util.Optional.of(TestUtil.WalletTestData.getWallet1ResponseTotpEnabled()));
-        assertThrows(CustomException.ValidationException.class, () -> {
-            walletService.createTotp(TestUtil.USER1_NAME);
-        });
+        assertThrows(CustomException.ValidationException.class, () -> walletService.createTotp(TestUtil.USER1_NAME));
     }
     @Test
     public void testCreateTotp_SaveNotSuccessfulException() {
         when(walletsRepo.findById(TestUtil.USER1_NAME)).thenReturn(java.util.Optional.of(TestUtil.WalletTestData.getWallet1Response()));
         doThrow(new RuntimeException("A database error")).when(walletsRepo).save(any());
-        assertThrows(CustomException.UnableToSaveException.class, () -> {
-            walletService.createTotp(TestUtil.USER1_NAME);
-        });
+        assertThrows(CustomException.UnableToSaveException.class, () -> walletService.createTotp(TestUtil.USER1_NAME));
     }
     @Test
     public void testConfirmTotp_Success() {
@@ -97,40 +90,30 @@ public class WalletServiceTests {
     @Test
     public void testConfirmTotp_EntityNotFoundException() {
         when(walletsRepo.findById(TestUtil.USER1_NAME)).thenReturn(java.util.Optional.empty());
-        assertThrows(CustomException.EntityNotFoundException.class, () -> {
-            walletService.confirmTotp(TestUtil.USER1_NAME, TestUtil.WalletTestData.TOTP_CODE);
-        });
+        assertThrows(CustomException.EntityNotFoundException.class, () -> walletService.confirmTotp(TestUtil.USER1_NAME, TestUtil.WalletTestData.TOTP_CODE));
     }
     @Test
     public void testConfirmTotp_ValidationException_SecretKeyNotFound() {
         when(walletsRepo.findById(TestUtil.USER1_NAME)).thenReturn(java.util.Optional.of(TestUtil.WalletTestData.getWallet1Response()));
-        assertThrows(CustomException.ValidationException.class, () -> {
-            walletService.confirmTotp(TestUtil.USER1_NAME, TestUtil.WalletTestData.TOTP_CODE);
-        });
+        assertThrows(CustomException.ValidationException.class, () -> walletService.confirmTotp(TestUtil.USER1_NAME, TestUtil.WalletTestData.TOTP_CODE));
     }
     @Test
     public void testConfirmTotp_ValidationException_TotpAlreadyEnabled() {
         when(walletsRepo.findById(TestUtil.USER1_NAME)).thenReturn(java.util.Optional.of(TestUtil.WalletTestData.getWallet1ResponseTotpEnabled()));
-        assertThrows(CustomException.ValidationException.class, () -> {
-            walletService.confirmTotp(TestUtil.USER1_NAME, TestUtil.WalletTestData.TOTP_CODE);
-        });
+        assertThrows(CustomException.ValidationException.class, () -> walletService.confirmTotp(TestUtil.USER1_NAME, TestUtil.WalletTestData.TOTP_CODE));
     }
     @Test
     public void testConfirmTotp_ValidationException_InvalidCode() {
         when(walletsRepo.findById(TestUtil.USER1_NAME)).thenReturn(java.util.Optional.of(TestUtil.WalletTestData.getWallet1ResponseTotpToBeEnabled()));
         when(verifier.isValidCode(anyString(), anyString())).thenReturn(false);
-        assertThrows(CustomException.ValidationException.class, () -> {
-            walletService.confirmTotp(TestUtil.USER1_NAME, TestUtil.WalletTestData.TOTP_CODE);
-        });
+        assertThrows(CustomException.ValidationException.class, () -> walletService.confirmTotp(TestUtil.USER1_NAME, TestUtil.WalletTestData.TOTP_CODE));
     }
     @Test
     public void testConfirmTotp_SaveNotSuccessfulException() {
         when(walletsRepo.findById(TestUtil.USER1_NAME)).thenReturn(java.util.Optional.of(TestUtil.WalletTestData.getWallet1ResponseTotpToBeEnabled()));
         when(verifier.isValidCode(anyString(), anyString())).thenReturn(true);
         when(walletsRepo.save(any())).thenThrow(new RuntimeException("A database error"));
-        assertThrows(CustomException.UnableToSaveException.class, () -> {
-            walletService.confirmTotp(TestUtil.USER1_NAME, TestUtil.WalletTestData.TOTP_CODE);
-        });
+        assertThrows(CustomException.UnableToSaveException.class, () -> walletService.confirmTotp(TestUtil.USER1_NAME, TestUtil.WalletTestData.TOTP_CODE));
     }
     @Test
     public void testGetStatement_Success() {
@@ -141,7 +124,7 @@ public class WalletServiceTests {
         ResponseEntity<GetStatementResponse> responseEntity = walletService.getStatement(TestUtil.USER1_NAME);
         GetStatementResponse expectedResponse = TestUtil.StatementTestData.needStatementResponse();
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(expectedResponse.getRecharges(),responseEntity.getBody().getRecharges());
+        assertEquals(expectedResponse.getRecharges(), Objects.requireNonNull(responseEntity.getBody()).getRecharges());
         assertEquals(expectedResponse.getCredits(),responseEntity.getBody().getCredits());
         assertEquals(expectedResponse.getDebits(),responseEntity.getBody().getDebits());
         assertEquals(LocalDateTime.class,responseEntity.getBody().getResponseTime().getClass());
@@ -149,8 +132,6 @@ public class WalletServiceTests {
     @Test
     public void testGetStatement_EntityNotFoundException() {
         when(walletsRepo.findById(TestUtil.USER1_NAME)).thenReturn(java.util.Optional.empty());
-        assertThrows(CustomException.EntityNotFoundException.class, () -> {
-            walletService.getStatement(TestUtil.USER1_NAME);
-        });
+        assertThrows(CustomException.EntityNotFoundException.class, () -> walletService.getStatement(TestUtil.USER1_NAME));
     }
 }

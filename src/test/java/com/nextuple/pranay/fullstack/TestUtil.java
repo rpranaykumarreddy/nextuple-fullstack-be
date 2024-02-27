@@ -17,9 +17,7 @@ public class TestUtil {
     public static final String TOKEN = "Bearer token";
     public static class UserTestData {
         public static final String USER1_EMAIL = "user1@gmail.com";
-        public static final String USER2_EMAIL = "user2@gmail.com";
         public static final String USER1_PASSWORD = "password1";
-        public static final String USER2_PASSWORD = "password2";
 
         public static Users getUser1Response() {
             return new Users(USER1_NAME, USER1_EMAIL, USER1_PASSWORD, "ROLE_USER", LocalDateTime.now());
@@ -56,18 +54,11 @@ public class TestUtil {
         public static Wallets getRechargedWallet1WithTotp() {
             return new Wallets(USER1_NAME, 30000.3, "secretKey", true, USER1_UPDATED, USER1_CREATED);
         }
-        public static Wallets getRechargedWallet1WithTotpToBeEnabled() {
-            return new Wallets(USER1_NAME, 30000.3, "secretKey", false, USER1_UPDATED, USER1_CREATED);
-        }
+
         public static Wallets getRechargedWallet2() {
             return new Wallets(USER2_NAME, 20000.2, null, false, USER1_UPDATED, USER1_CREATED);
         }
-        public static Wallets getRechargedWallet2WithTotp() {
-            return new Wallets(USER2_NAME, 20000.2, "secretKey", true, USER1_UPDATED, USER1_CREATED);
-        }
-        public static Wallets getRechargedWallet2WithTotpToBeEnabled() {
-            return new Wallets(USER2_NAME, 20000.2, "secretKey", false, USER1_UPDATED, USER1_CREATED);
-        }
+
     }
 
     public static class TransactionTestData{
@@ -115,7 +106,7 @@ public class TestUtil {
         }
 
         public static List<Transactions> getToTransactions() {
-            return Arrays.asList(
+            return List.of(
                     getTransaction3()
             );
         }
@@ -139,19 +130,18 @@ public class TestUtil {
         }
 
         public static List<Recharges> getRecharges() {
-            return Arrays.asList(
+            return List.of(
                     getRecharge()
             );
         }
     }
     public static class StatementTestData{
         public static GetStatementResponse needStatementResponse() {
-            GetStatementResponse response = new GetStatementResponse(
+            return new GetStatementResponse(
                     WalletTestData.getWallet1Response(),
                     TransactionTestData.getFromTransactions(),
                     TransactionTestData.getToTransactions(),
                     RechargeTestData.getRecharges());
-            return response;
         }
     }
         /*

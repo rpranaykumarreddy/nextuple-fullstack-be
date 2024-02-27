@@ -1,23 +1,18 @@
 package com.nextuple.pranay.fullstack.security;
 
-import com.nextuple.pranay.fullstack.TestUtil;
-import com.nextuple.pranay.fullstack.model.Users;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import static org.mockito.Mockito.*;
-
+@SpringBootTest
 public class JWTAuthenticationFilterTest {
 
     @Mock
@@ -28,11 +23,6 @@ public class JWTAuthenticationFilterTest {
 
     @InjectMocks
     private JWTAuthenticationFilter jwtAuthenticationFilter;
-
-    @BeforeEach
-    public void setup() {
-        MockitoAnnotations.openMocks(this);
-    }
 
     @Test
     public void testDoFilterInternal() throws Exception {
