@@ -2,6 +2,7 @@ package com.nextuple.pranay.fullstack.controller;
 
 
 import com.nextuple.pranay.fullstack.TestUtil;
+import com.nextuple.pranay.fullstack.dto.MessageResponse;
 import com.nextuple.pranay.fullstack.service.WalletService;
 import com.nextuple.pranay.fullstack.utils.AuthUserUtils;
 import dev.samstevens.totp.exceptions.QrGenerationException;
@@ -36,7 +37,7 @@ public class WalletControllerTests {
     @Test
     public void testCreateTotp_Success_validation() throws QrGenerationException {
         when(authUserUtils.getUserId(anyString())).thenReturn(TestUtil.USER1_NAME);
-        when(walletService.createTotp(anyString())).thenReturn(new ResponseEntity<>("Totp created successfully", HttpStatus.OK));
+        when(walletService.createTotp(anyString())).thenReturn(new ResponseEntity<>(new MessageResponse("Totp created successfully"), HttpStatus.OK));
         assertDoesNotThrow(() -> walletController.createTotp(TestUtil.TOKEN));
     }
     @Test

@@ -3,6 +3,7 @@ package com.nextuple.pranay.fullstack.controller;
 import com.nextuple.pranay.fullstack.dto.AddUserRequest;
 import com.nextuple.pranay.fullstack.dto.LoginAuthRequest;
 import com.nextuple.pranay.fullstack.dto.LoginAuthResponse;
+import com.nextuple.pranay.fullstack.dto.MessageResponse;
 import com.nextuple.pranay.fullstack.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ public class AuthController {
     AuthService authService;
 
     @PostMapping(value = "/register")
-    public ResponseEntity<String> addNewUser(@RequestBody AddUserRequest addUserRequest){
+    public ResponseEntity<MessageResponse> addNewUser(@RequestBody AddUserRequest addUserRequest){
         addUserRequest.validate();
         return authService.addUser(addUserRequest);
     }

@@ -2,6 +2,7 @@ package com.nextuple.pranay.fullstack.controller;
 
 
 import com.nextuple.pranay.fullstack.TestUtil;
+import com.nextuple.pranay.fullstack.dto.MessageResponse;
 import com.nextuple.pranay.fullstack.service.TransactionService;
 import com.nextuple.pranay.fullstack.utils.AuthUserUtils;
 import org.junit.jupiter.api.Test;
@@ -46,7 +47,8 @@ public class TransactionControllerTests {
     @Test
     public void testCancelTransaction_Success_validation() {
         when(authUserUtils.getUserId(anyString())).thenReturn(TestUtil.USER1_NAME);
-        when(transactionService.cancelTransaction(anyString(), anyString())).thenReturn(new ResponseEntity<>("Transaction cancelled successfully", HttpStatus.OK));
+        when(transactionService.cancelTransaction(anyString(), anyString())).thenReturn(
+                new ResponseEntity<>(new MessageResponse("Transaction cancelled successfully"), HttpStatus.OK));
         assertDoesNotThrow(() -> transactionController.cancelTransaction(TestUtil.TransactionTestData.TRANSACTION_ID,TestUtil.TOKEN));
     }
 

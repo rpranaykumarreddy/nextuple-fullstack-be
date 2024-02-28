@@ -3,6 +3,7 @@ package com.nextuple.pranay.fullstack.service;
 import com.nextuple.pranay.fullstack.dto.AddUserRequest;
 import com.nextuple.pranay.fullstack.dto.LoginAuthResponse;
 import com.nextuple.pranay.fullstack.dto.LoginAuthRequest;
+import com.nextuple.pranay.fullstack.dto.MessageResponse;
 import com.nextuple.pranay.fullstack.exception.CustomException;
 import com.nextuple.pranay.fullstack.model.Users;
 import com.nextuple.pranay.fullstack.model.Wallets;
@@ -35,7 +36,7 @@ public class AuthService {
     @Autowired
     private JWTTokenProvider jwtTokenProvider;
     @Transactional
-    public ResponseEntity<String> addUser(AddUserRequest addUserRequest){
+    public ResponseEntity<MessageResponse> addUser(AddUserRequest addUserRequest){
         if(usersRepo.existsByUsername(addUserRequest.getUsername())){
            throw new CustomException.EntityExistsException("Username already exists. Please try another username");
         }
@@ -55,7 +56,7 @@ public class AuthService {
             throw new CustomException.UnableToSaveException("Unable to save user");
         }
         return new ResponseEntity<>(
-                "User Created Successfully with username: "+userResponse.getUsername(),
+                new MessageResponse("User Created Successfully with username: "+userResponse.getUsername()),
                 HttpStatus.CREATED);
     }
     public ResponseEntity<LoginAuthResponse> login(LoginAuthRequest loginDto) {
@@ -73,7 +74,7 @@ public class AuthService {
     }
 
     public ResponseEntity<Boolean> checkUsername(String username) {
-        return new ResponseEntity<>(usersRepo.existsByUsername(username), HttpStatus.OK);
+        return new ResponseEntity<>(!(usersRepo.existsByUsername(username)), HttpStatus.OK);
     }
 
 }

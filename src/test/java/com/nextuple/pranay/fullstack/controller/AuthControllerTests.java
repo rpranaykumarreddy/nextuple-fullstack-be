@@ -5,6 +5,7 @@ import com.nextuple.pranay.fullstack.TestUtil;
 import com.nextuple.pranay.fullstack.dto.AddUserRequest;
 import com.nextuple.pranay.fullstack.dto.LoginAuthRequest;
 import com.nextuple.pranay.fullstack.dto.LoginAuthResponse;
+import com.nextuple.pranay.fullstack.dto.MessageResponse;
 import com.nextuple.pranay.fullstack.exception.CustomException;
 import com.nextuple.pranay.fullstack.service.AuthService;
 import org.junit.jupiter.api.Test;
@@ -30,7 +31,7 @@ public class AuthControllerTests {
 
     @Test
     public void testAddNewUser_Success_validation() {
-        when(authService.addUser(any())).thenReturn(new ResponseEntity<>("User added successfully", HttpStatus.OK));
+        when(authService.addUser(any())).thenReturn(new ResponseEntity<>(new MessageResponse("User added successfully"), HttpStatus.OK));
         assertDoesNotThrow(() -> authController.addNewUser(TestUtil.UserTestData.getUser1Request()));
     }
 

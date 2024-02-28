@@ -4,6 +4,7 @@ package com.nextuple.pranay.fullstack.service;
 import com.nextuple.pranay.fullstack.dto.GetWalletDetailsResponse;
 import com.nextuple.pranay.fullstack.dto.InitTransactionRequest;
 import com.nextuple.pranay.fullstack.dto.InitTransactionResponse;
+import com.nextuple.pranay.fullstack.dto.MessageResponse;
 import com.nextuple.pranay.fullstack.exception.CustomException;
 import com.nextuple.pranay.fullstack.model.Transactions;
 import com.nextuple.pranay.fullstack.model.Wallets;
@@ -122,7 +123,7 @@ public class TransactionService {
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
-    public ResponseEntity<String> cancelTransaction(String userId, String tranactionId) {
+    public ResponseEntity<MessageResponse> cancelTransaction(String userId, String tranactionId) {
         Transactions transaction = transactionsRepo.findById(tranactionId).orElseThrow(
                 () -> new CustomException.EntityNotFoundException("Transaction not found")
         );
@@ -134,6 +135,6 @@ public class TransactionService {
         }
         transaction.setStatus(Transactions.TransactionStatus.CANCELLED);
         transactionsRepo.save(transaction);
-        return ResponseEntity.ok("Transaction cancelled");
+        return new ResponseEntity<>(new MessageResponse("Transaction cancelled"), HttpStatus.OK);
     }
 }

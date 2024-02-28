@@ -3,6 +3,7 @@ package com.nextuple.pranay.fullstack.services;
 import com.nextuple.pranay.fullstack.TestUtil;
 import com.nextuple.pranay.fullstack.dto.GetWalletDetailsResponse;
 import com.nextuple.pranay.fullstack.dto.InitTransactionResponse;
+import com.nextuple.pranay.fullstack.dto.MessageResponse;
 import com.nextuple.pranay.fullstack.exception.CustomException;
 import com.nextuple.pranay.fullstack.repo.TransactionsRepo;
 import com.nextuple.pranay.fullstack.repo.WalletsRepo;
@@ -169,9 +170,9 @@ public class TransactionsServiceTests {
     public void testCancelTransaction_Success() {
         when(walletsRepo.findById(any())).thenReturn(Optional.of(TestUtil.WalletTestData.getRechargedWallet1WithTotp()));
         when(transactionsRepo.findById(TestUtil.TransactionTestData.TRANSACTION_ID)).thenReturn(Optional.of(TestUtil.TransactionTestData.getTransaction1_InitStatus()));
-        ResponseEntity<String> responseEntity = transactionService.cancelTransaction(TestUtil.USER1_NAME, TestUtil.TransactionTestData.TRANSACTION_ID);
+        ResponseEntity<MessageResponse> responseEntity = transactionService.cancelTransaction(TestUtil.USER1_NAME, TestUtil.TransactionTestData.TRANSACTION_ID);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals("Transaction cancelled", responseEntity.getBody());
+        assertEquals("Transaction cancelled", Objects.requireNonNull(responseEntity.getBody()).getMessage());
     }
     @Test
     public void testCancelTransaction_EntityNotFoundException() {

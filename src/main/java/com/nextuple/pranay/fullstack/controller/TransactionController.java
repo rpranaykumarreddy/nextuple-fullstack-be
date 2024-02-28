@@ -3,6 +3,7 @@ package com.nextuple.pranay.fullstack.controller;
 import com.nextuple.pranay.fullstack.dto.GetWalletDetailsResponse;
 import com.nextuple.pranay.fullstack.dto.InitTransactionRequest;
 import com.nextuple.pranay.fullstack.dto.InitTransactionResponse;
+import com.nextuple.pranay.fullstack.dto.MessageResponse;
 import com.nextuple.pranay.fullstack.service.TransactionService;
 import com.nextuple.pranay.fullstack.utils.AuthUserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,7 @@ public class TransactionController {
         return transactionService.confirmTransaction(userId, transactionId, code);}
 
     @PostMapping("/cancel/{tranactionId}")
-    public ResponseEntity<String> cancelTransaction(@PathVariable String tranactionId, @RequestHeader("Authorization") String token) {
+    public ResponseEntity<MessageResponse> cancelTransaction(@PathVariable String tranactionId, @RequestHeader("Authorization") String token) {
         String userId = authUserUtils.getUserId(token);
         return transactionService.cancelTransaction(userId, tranactionId);}
 }

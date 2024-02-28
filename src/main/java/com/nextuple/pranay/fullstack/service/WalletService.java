@@ -3,6 +3,7 @@ package com.nextuple.pranay.fullstack.service;
 
 import com.nextuple.pranay.fullstack.dto.GetStatementResponse;
 import com.nextuple.pranay.fullstack.dto.GetWalletDetailsResponse;
+import com.nextuple.pranay.fullstack.dto.MessageResponse;
 import com.nextuple.pranay.fullstack.exception.CustomException;
 import com.nextuple.pranay.fullstack.model.Recharges;
 import com.nextuple.pranay.fullstack.model.Transactions;
@@ -48,7 +49,7 @@ public class WalletService {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ResponseEntity<String> createTotp(String userId) throws QrGenerationException {
+    public ResponseEntity<MessageResponse> createTotp(String userId) throws QrGenerationException {
         SecretGenerator secretGenerator = new DefaultSecretGenerator();
         String secret = secretGenerator.generate();
         Wallets wallet = walletsRepo.findById(userId).orElseThrow(
@@ -76,7 +77,7 @@ public class WalletService {
         String mimeType = generator.getImageMimeType();
 //        String dataUri = getDataUriForImage(imageData, mimeType);
         String dataUri ="<img src='"+getDataUriForImage(imageData, mimeType)+"' alt='Need QR' width='200' height='200'>";
-        return new ResponseEntity<>(dataUri, HttpStatus.CREATED);
+        return new ResponseEntity<>(new MessageResponse(dataUri), HttpStatus.CREATED);
     }
 
     public ResponseEntity<Boolean> confirmTotp(String userId, String code) {

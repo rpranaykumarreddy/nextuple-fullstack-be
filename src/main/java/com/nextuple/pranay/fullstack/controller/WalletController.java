@@ -2,6 +2,7 @@ package com.nextuple.pranay.fullstack.controller;
 
 import com.nextuple.pranay.fullstack.dto.GetStatementResponse;
 import com.nextuple.pranay.fullstack.dto.GetWalletDetailsResponse;
+import com.nextuple.pranay.fullstack.dto.MessageResponse;
 import com.nextuple.pranay.fullstack.service.WalletService;
 import com.nextuple.pranay.fullstack.utils.AuthUserUtils;
 import dev.samstevens.totp.exceptions.QrGenerationException;
@@ -24,7 +25,7 @@ public class WalletController {
         return walletService.getWalletDetails(userId);
     }
     @PostMapping("/totp")
-    public ResponseEntity<String> createTotp(@RequestHeader("Authorization") String token) throws QrGenerationException {
+    public ResponseEntity<MessageResponse> createTotp(@RequestHeader("Authorization") String token) throws QrGenerationException {
         String userId = authUserUtils.getUserId(token);
         return walletService.createTotp(userId);
     }
