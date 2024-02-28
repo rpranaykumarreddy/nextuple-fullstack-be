@@ -75,8 +75,8 @@ public class WalletService {
         QrGenerator generator = new ZxingPngQrGenerator();
         byte[] imageData = generator.generate(data);
         String mimeType = generator.getImageMimeType();
-//        String dataUri = getDataUriForImage(imageData, mimeType);
-        String dataUri ="<img src='"+getDataUriForImage(imageData, mimeType)+"' alt='Need QR' width='200' height='200'>";
+        String dataUri = getDataUriForImage(imageData, mimeType);
+//        String dataUri ="<img src='"+getDataUriForImage(imageData, mimeType)+"' alt='Need QR' width='200' height='200'>";
         return new ResponseEntity<>(new MessageResponse(dataUri), HttpStatus.CREATED);
     }
 
