@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-//todo: store username as lowercase & also check existing username as lowercase
 @CrossOrigin("*")
 @RestController
 @RequestMapping("/auth")
@@ -31,6 +30,7 @@ public class AuthController {
     }
     @GetMapping(value="/check-username/{username}")
     public ResponseEntity<Boolean> checkUsername(@PathVariable String username){
-        return authService.checkUsername(username);
+        String usernameIgnoreCase = username.toLowerCase();
+        return authService.checkUsername(usernameIgnoreCase);
     }
 }

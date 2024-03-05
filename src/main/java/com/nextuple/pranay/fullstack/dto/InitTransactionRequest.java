@@ -13,6 +13,7 @@ public class InitTransactionRequest {
     private double amount;
 
     public void validate() {
+        setTo(to.toLowerCase());
         if (to == null || to.isEmpty()) {
             throw new CustomException.ValidationException("To address cannot be empty");
         }

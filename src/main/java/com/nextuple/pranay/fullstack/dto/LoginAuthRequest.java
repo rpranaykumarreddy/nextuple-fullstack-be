@@ -15,6 +15,7 @@ public class LoginAuthRequest {
     private String password;
 
     public void validate() {
+        setUsername(username.toLowerCase());
         if (username == null || username.isEmpty()) {
             throw new CustomException.ValidationException("Username cannot be empty");
         }

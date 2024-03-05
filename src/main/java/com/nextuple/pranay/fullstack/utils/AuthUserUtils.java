@@ -20,7 +20,7 @@ public class AuthUserUtils {
             if(jwtTokenProvider.validateToken(token)){
                 String username = jwtTokenProvider.getUsername(token);
                 // Create Wallet
-                Users user = usersRepo.findByUsernameOrEmail(username,username).orElseThrow(
+                Users user = usersRepo.findByUsernameOrEmailIgnoreCase(username,username).orElseThrow(
                         () -> new CustomException.EntityNotFoundException("User not found")
                 );
                 return user.getUsername();

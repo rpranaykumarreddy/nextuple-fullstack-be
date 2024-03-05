@@ -33,7 +33,7 @@ public class TransactionService {
     CodeGenerator codeGenerator = new DefaultCodeGenerator();
     CodeVerifier verifier = new DefaultCodeVerifier(codeGenerator, timeProvider);
     public ResponseEntity<Boolean> checkUsername(String username) {
-        return new ResponseEntity<>(walletsRepo.existsByUsername(username), HttpStatus.OK);
+        return new ResponseEntity<>(walletsRepo.existsByUsernameIgnoreCase(username), HttpStatus.OK);
     }
 
     @Transactional

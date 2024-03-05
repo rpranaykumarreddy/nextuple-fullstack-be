@@ -31,24 +31,24 @@ public class UserInfoUserDetailsServiceTest {
         user.setPassword("password");
         user.setRoles("ROLE_USER");
 
-        when(usersRepo.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail)).thenReturn(Optional.of(user));
+        when(usersRepo.findByUsernameOrEmailIgnoreCase(usernameOrEmail, usernameOrEmail)).thenReturn(Optional.of(user));
 
         UserDetails userDetails = userInfoUserDetailsService.loadUserByUsername(usernameOrEmail);
         assertEquals(usernameOrEmail, userDetails.getUsername());
         assertEquals(user.getPassword(), userDetails.getPassword());
         assertTrue(userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_USER")));
 
-        verify(usersRepo, times(1)).findByUsernameOrEmail(usernameOrEmail, usernameOrEmail);
+        verify(usersRepo, times(1)).findByUsernameOrEmailIgnoreCase(usernameOrEmail, usernameOrEmail);
     }
 
     @Test
     public void testLoadUserByUsername_NotFound() {
         String usernameOrEmail = "username";
 
-        when(usersRepo.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail)).thenReturn(Optional.empty());
+        when(usersRepo.findByUsernameOrEmailIgnoreCase(usernameOrEmail, usernameOrEmail)).thenReturn(Optional.empty());
 
         assertThrows(UsernameNotFoundException.class, () -> userInfoUserDetailsService.loadUserByUsername(usernameOrEmail));
 
-        verify(usersRepo, times(1)).findByUsernameOrEmail(usernameOrEmail, usernameOrEmail);
+        verify(usersRepo, times(1)).findByUsernameOrEmailIgnoreCase(usernameOrEmail, usernameOrEmail);
     }
 }

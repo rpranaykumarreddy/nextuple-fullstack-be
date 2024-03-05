@@ -21,7 +21,7 @@ public class UserInfoUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
-        Users userInfo= usersRepo.findByUsernameOrEmail(usernameOrEmail,usernameOrEmail).orElseThrow(()->
+        Users userInfo= usersRepo.findByUsernameOrEmailIgnoreCase(usernameOrEmail,usernameOrEmail).orElseThrow(()->
                 new UsernameNotFoundException("User not found with Username or Email" + usernameOrEmail)
         );
         Set<GrantedAuthority> authorityList= Arrays.stream(userInfo.getRoles()

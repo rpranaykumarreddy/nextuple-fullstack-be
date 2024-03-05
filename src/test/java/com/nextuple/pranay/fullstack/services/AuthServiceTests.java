@@ -48,8 +48,8 @@ public class AuthServiceTests {
 
     @Test
     public void testAddUser_Success() {
-        when(usersRepo.existsByUsername(anyString())).thenReturn(false);
-        when(usersRepo.existsByEmail(anyString())).thenReturn(false);
+        when(usersRepo.existsByUsernameIgnoreCase(anyString())).thenReturn(false);
+        when(usersRepo.existsByEmailIgnoreCase(anyString())).thenReturn(false);
         when(usersRepo.save(any(Users.class))).thenReturn(TestUtil.UserTestData.getUser1Response());
         when(walletsRepo.save(any(Wallets.class))).thenReturn(TestUtil.WalletTestData.getWallet1Response());
         ResponseEntity<MessageResponse> response = authService.addUser(TestUtil.UserTestData.getUser1Request());
@@ -59,21 +59,21 @@ public class AuthServiceTests {
     }
     @Test
     public void testAddUser_UsernameExists() {
-        when(usersRepo.existsByUsername(anyString())).thenReturn(true);
+        when(usersRepo.existsByUsernameIgnoreCase(anyString())).thenReturn(true);
         assertThrows(CustomException.EntityExistsException.class, () ->
             authService.addUser(TestUtil.UserTestData.getUser1Request()), "Username already exists. Please try another username");
     }
     @Test
     public void testAddUser_EmailExists() {
-        when(usersRepo.existsByUsername(anyString())).thenReturn(false);
-        when(usersRepo.existsByEmail(anyString())).thenReturn(true);
+        when(usersRepo.existsByUsernameIgnoreCase(anyString())).thenReturn(false);
+        when(usersRepo.existsByEmailIgnoreCase(anyString())).thenReturn(true);
         assertThrows(CustomException.EntityExistsException.class, () ->
             authService.addUser(TestUtil.UserTestData.getUser1Request()), "Email Exists. Please try login with your email or try another email.");
     }
     @Test
     public void testAddUser_SaveNotSuccessful() {
-        when(usersRepo.existsByUsername(anyString())).thenReturn(false);
-        when(usersRepo.existsByEmail(anyString())).thenReturn(false);
+        when(usersRepo.existsByUsernameIgnoreCase(anyString())).thenReturn(false);
+        when(usersRepo.existsByEmailIgnoreCase(anyString())).thenReturn(false);
         when(usersRepo.save(any(Users.class))).thenReturn(TestUtil.UserTestData.getUser1Response());
         doThrow(new RuntimeException()).when(walletsRepo).save(any(Wallets.class));
         assertThrows(CustomException.UnableToSaveException.class, () ->
@@ -90,7 +90,7 @@ public class AuthServiceTests {
     }
     @Test
     public void testCheckUsername_Success() {
-        when(usersRepo.existsByUsername(anyString())).thenReturn(true);
+        when(usersRepo.existsByUsernameIgnoreCase(anyString())).thenReturn(true);
         ResponseEntity<Boolean> response = authService.checkUsername("username");
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());

@@ -36,11 +36,11 @@ public class TransactionsServiceTests {
     private TransactionService transactionService;
     @Test
     public void testCheckUsername_Success() {
-        when(walletsRepo.existsByUsername(TestUtil.USER1_NAME)).thenReturn(true);
+        when(walletsRepo.existsByUsernameIgnoreCase(TestUtil.USER1_NAME)).thenReturn(true);
         ResponseEntity<Boolean> responseEntity = transactionService.checkUsername(TestUtil.USER1_NAME);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(true, responseEntity.getBody());
-        verify(walletsRepo, times(1)).existsByUsername(TestUtil.USER1_NAME);
+        verify(walletsRepo, times(1)).existsByUsernameIgnoreCase(TestUtil.USER1_NAME);
     }
     @Test
     public void testInitTransaction_Success() {
@@ -86,7 +86,6 @@ public class TransactionsServiceTests {
         when(transactionsRepo.save(any())).thenThrow(new RuntimeException("A database error"));
         assertThrows(CustomException.UnableToSaveException.class, () -> transactionService.initTransaction(TestUtil.USER1_NAME, TestUtil.TransactionTestData.getInitTransactionRequest1()));
     }
-    //Todo: Add more tests for confirmTransaction
     @Test
     public void testConfirmTransaction_Success() {
         when(transactionsRepo.findById(TestUtil.TransactionTestData.TRANSACTION_ID)).thenReturn(Optional.of(TestUtil.TransactionTestData.getTransaction1_InitStatus_TimeNow()));

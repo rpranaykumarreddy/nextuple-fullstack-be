@@ -27,7 +27,7 @@ public class AuthUserUtilsTests {
     public void testGetUserId_Success() {
         when(jwtTokenProvider.validateToken(any())).thenReturn(true);
         when(jwtTokenProvider.getUsername(any())).thenReturn(TestUtil.USER1_NAME);
-        when(usersRepo.findByUsernameOrEmail(TestUtil.USER1_NAME, TestUtil.USER1_NAME))
+        when(usersRepo.findByUsernameOrEmailIgnoreCase(TestUtil.USER1_NAME, TestUtil.USER1_NAME))
                 .thenReturn(Optional.of(TestUtil.UserTestData.getUser1Response()));
         String userId = authUserUtils.getUserId(TestUtil.TOKEN);
         assertEquals(TestUtil.USER1_NAME, userId);
@@ -36,7 +36,7 @@ public class AuthUserUtilsTests {
     public void testGetUserId_UserNotFoundException() {
         when(jwtTokenProvider.validateToken(any())).thenReturn(true);
         when(jwtTokenProvider.getUsername(any())).thenReturn(TestUtil.USER1_NAME);
-        when(usersRepo.findByUsernameOrEmail(TestUtil.USER1_NAME, TestUtil.USER1_NAME))
+        when(usersRepo.findByUsernameOrEmailIgnoreCase(TestUtil.USER1_NAME, TestUtil.USER1_NAME))
                 .thenReturn(Optional.empty());
         assertThrows(CustomException.EntityNotFoundException.class, () -> authUserUtils.getUserId(TestUtil.TOKEN));
     }
@@ -49,7 +49,7 @@ public class AuthUserUtilsTests {
     public void testGetUserId_UnauthorizedException2() {
         when(jwtTokenProvider.validateToken(any())).thenReturn(true);
         when(jwtTokenProvider.getUsername(any())).thenReturn(TestUtil.USER1_NAME);
-        when(usersRepo.findByUsernameOrEmail(TestUtil.USER1_NAME, TestUtil.USER1_NAME))
+        when(usersRepo.findByUsernameOrEmailIgnoreCase(TestUtil.USER1_NAME, TestUtil.USER1_NAME))
                 .thenReturn(Optional.of(TestUtil.UserTestData.getUser1Response()));
         assertThrows(CustomException.UnauthorizedException.class, () -> authUserUtils.getUserId("Invalid token"));
     }
@@ -57,7 +57,7 @@ public class AuthUserUtilsTests {
     public void testGetUserId_UnauthorizedException3() {
         when(jwtTokenProvider.validateToken(any())).thenReturn(true);
         when(jwtTokenProvider.getUsername(any())).thenReturn(TestUtil.USER1_NAME);
-        when(usersRepo.findByUsernameOrEmail(TestUtil.USER1_NAME, TestUtil.USER1_NAME))
+        when(usersRepo.findByUsernameOrEmailIgnoreCase(TestUtil.USER1_NAME, TestUtil.USER1_NAME))
                 .thenReturn(Optional.of(TestUtil.UserTestData.getUser1Response()));
         assertThrows(CustomException.UnauthorizedException.class, () -> authUserUtils.getUserId("Bear"));
     }

@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.List;
 
 public interface TransactionsRepo extends MongoRepository<Transactions, String> {
-    List<Transactions> findAllByFromUId(String userId);
+    List<Transactions> findAllByFromUIdIgnoreCase(String userId);
 
-    List<Transactions> findAllByToUId(String userId);
+    List<Transactions> findAllByToUIdIgnoreCase(String userId);
 }

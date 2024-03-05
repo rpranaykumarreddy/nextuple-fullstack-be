@@ -7,5 +7,5 @@ import java.util.List;
 
 
 public interface RechargesRepo extends MongoRepository<Recharges, String> {
-    List<Recharges> findAllByuId(String userId);
+    List<Recharges> findAllByuIdIgnoreCase(String userId);
 }

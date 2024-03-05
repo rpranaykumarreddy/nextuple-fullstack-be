@@ -4,5 +4,5 @@ import com.nextuple.pranay.fullstack.model.Wallets;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface WalletsRepo extends MongoRepository<Wallets, String> {
-    Boolean existsByUsername(String username);
+    Boolean existsByUsernameIgnoreCase(String username);
 }

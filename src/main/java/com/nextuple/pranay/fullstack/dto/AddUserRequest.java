@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Locale;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,6 +17,8 @@ public class AddUserRequest {
     private String password;
 
     public void validate() {
+        setUsername(username.toLowerCase());
+        setEmail(email.toLowerCase());
         if (username == null || username.isEmpty()) {
             throw new CustomException.ValidationException("Username cannot be empty");
         }

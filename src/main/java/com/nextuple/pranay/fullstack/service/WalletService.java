@@ -109,9 +109,9 @@ public class WalletService {
         Wallets wallet = walletsRepo.findById(userId).orElseThrow(
                 ()->new CustomException.EntityNotFoundException("Wallet not found")
         );
-        List<Transactions> fromTransactions = transactionsRepo.findAllByFromUId(userId);
-        List<Transactions> toTransactions = transactionsRepo.findAllByToUId(userId);
-        List<Recharges> recharges = rechargesRepo.findAllByuId(userId);
+        List<Transactions> fromTransactions = transactionsRepo.findAllByFromUIdIgnoreCase(userId);
+        List<Transactions> toTransactions = transactionsRepo.findAllByToUIdIgnoreCase(userId);
+        List<Recharges> recharges = rechargesRepo.findAllByuIdIgnoreCase(userId);
         GetStatementResponse response = new GetStatementResponse(wallet, fromTransactions, toTransactions, recharges);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

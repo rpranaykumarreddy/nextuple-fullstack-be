@@ -21,7 +21,9 @@ public class TransactionController {
 
     @GetMapping("/check-wallet/{username}")
     public ResponseEntity<Boolean> checkWallet(@PathVariable String username){
-        return transactionService.checkUsername(username);}
+        String usernameIgnoreCase = username.toLowerCase();
+        return transactionService.checkUsername(usernameIgnoreCase);
+    }
 
     @PostMapping("/init")
     public ResponseEntity<InitTransactionResponse> initTransaction(@RequestHeader("Authorization") String token, @RequestBody InitTransactionRequest request) {
@@ -34,8 +36,8 @@ public class TransactionController {
         String userId = authUserUtils.getUserId(token);
         return transactionService.confirmTransaction(userId, transactionId, code);}
 
-    @PostMapping("/cancel/{tranactionId}")
-    public ResponseEntity<MessageResponse> cancelTransaction(@PathVariable String tranactionId, @RequestHeader("Authorization") String token) {
+    @PostMapping("/cancel/{transactionId}")
+    public ResponseEntity<MessageResponse> cancelTransaction(@PathVariable String transactionId, @RequestHeader("Authorization") String token) {
         String userId = authUserUtils.getUserId(token);
-        return transactionService.cancelTransaction(userId, tranactionId);}
+        return transactionService.cancelTransaction(userId, transactionId);}
 }

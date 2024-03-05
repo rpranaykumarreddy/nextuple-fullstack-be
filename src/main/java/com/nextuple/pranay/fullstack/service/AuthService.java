@@ -37,10 +37,10 @@ public class AuthService {
     private JWTTokenProvider jwtTokenProvider;
     @Transactional
     public ResponseEntity<MessageResponse> addUser(AddUserRequest addUserRequest){
-        if(usersRepo.existsByUsername(addUserRequest.getUsername())){
+        if(usersRepo.existsByUsernameIgnoreCase(addUserRequest.getUsername())){
            throw new CustomException.EntityExistsException("Username already exists. Please try another username");
         }
-        if(usersRepo.existsByEmail(addUserRequest.getEmail())){
+        if(usersRepo.existsByEmailIgnoreCase(addUserRequest.getEmail())){
             throw new CustomException.EntityExistsException("Email Exists. Please try login with your email or try another email.");
         }
         Users userDB = addUserRequest.toUser();
@@ -74,7 +74,7 @@ public class AuthService {
     }
 
     public ResponseEntity<Boolean> checkUsername(String username) {
-        return new ResponseEntity<>(!(usersRepo.existsByUsername(username)), HttpStatus.OK);
+        return new ResponseEntity<>(!(usersRepo.existsByUsernameIgnoreCase(username)), HttpStatus.OK);
     }
 
 }

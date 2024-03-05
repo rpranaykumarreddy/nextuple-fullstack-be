@@ -118,9 +118,9 @@ public class WalletServiceTests {
     @Test
     public void testGetStatement_Success() {
         when(walletsRepo.findById(TestUtil.USER1_NAME)).thenReturn(java.util.Optional.of(TestUtil.WalletTestData.getWallet1Response()));
-        when(transactionsRepo.findAllByFromUId(TestUtil.USER1_NAME)).thenReturn(TestUtil.TransactionTestData.getFromTransactions());
-        when(transactionsRepo.findAllByToUId(TestUtil.USER1_NAME)).thenReturn(TestUtil.TransactionTestData.getToTransactions());
-        when(rechargesRepo.findAllByuId(TestUtil.USER1_NAME)).thenReturn(TestUtil.RechargeTestData.getRecharges());
+        when(transactionsRepo.findAllByFromUIdIgnoreCase(TestUtil.USER1_NAME)).thenReturn(TestUtil.TransactionTestData.getFromTransactions());
+        when(transactionsRepo.findAllByToUIdIgnoreCase(TestUtil.USER1_NAME)).thenReturn(TestUtil.TransactionTestData.getToTransactions());
+        when(rechargesRepo.findAllByuIdIgnoreCase(TestUtil.USER1_NAME)).thenReturn(TestUtil.RechargeTestData.getRecharges());
         ResponseEntity<GetStatementResponse> responseEntity = walletService.getStatement(TestUtil.USER1_NAME);
         GetStatementResponse expectedResponse = TestUtil.StatementTestData.needStatementResponse();
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());

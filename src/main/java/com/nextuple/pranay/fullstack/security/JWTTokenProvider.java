@@ -25,7 +25,7 @@ public class JWTTokenProvider {
     private UsersRepo usersRepo;
     public String generateToken(Authentication authentication) {
         String userLogin = authentication.getName();
-        String username = usersRepo.findByUsernameOrEmail(userLogin,userLogin).orElseThrow(
+        String username = usersRepo.findByUsernameOrEmailIgnoreCase(userLogin,userLogin).orElseThrow(
                 ()-> new CustomException.EntityNotFoundException("User not found with username: "+userLogin)
         ).getUsername();
         Date currentDate = new Date();
