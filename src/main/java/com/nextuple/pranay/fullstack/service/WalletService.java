@@ -112,7 +112,7 @@ public class WalletService {
         );
         LocalDateTime startOfMonth = LocalDateTime.of(year, month, 1, 0, 0);
         LocalDateTime endOfMonth = startOfMonth.plusMonths(1).minusNanos(1);
-
+        //month notation is 1-based
         List<Transactions> fromTransactions = transactionsRepo.findAllByFromUIdIgnoreCaseAndCreatedBetween(userId, startOfMonth, endOfMonth);
         List<Transactions> toTransactions = transactionsRepo.findAllByToUIdIgnoreCaseAndCreatedBetween(userId, startOfMonth, endOfMonth);
         List<Recharges> recharges = rechargesRepo.findAllByuIdIgnoreCaseAndCreatedBetween(userId, startOfMonth, endOfMonth);
