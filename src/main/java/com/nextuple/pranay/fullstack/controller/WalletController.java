@@ -3,12 +3,15 @@ package com.nextuple.pranay.fullstack.controller;
 import com.nextuple.pranay.fullstack.dto.GetStatementResponse;
 import com.nextuple.pranay.fullstack.dto.GetWalletDetailsResponse;
 import com.nextuple.pranay.fullstack.dto.MessageResponse;
+import com.nextuple.pranay.fullstack.exception.CustomException;
 import com.nextuple.pranay.fullstack.service.WalletService;
 import com.nextuple.pranay.fullstack.utils.AuthUserUtils;
 import dev.samstevens.totp.exceptions.QrGenerationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 
 @CrossOrigin("*")
 @RestController
@@ -37,8 +40,10 @@ public class WalletController {
     }
 
     @GetMapping("/statement")
-    public ResponseEntity<GetStatementResponse> getStatement(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<GetStatementResponse> getStatement(@RequestHeader("Authorization") String token, @RequestParam int month, @RequestParam int year) {
         String userId = authUserUtils.getUserId(token);
-        return walletService.getStatement(userId);
+        if (month < 0 || month > 11 || year < 2024 || year > 9999)
+            throw new CustomException.ValidationException("Invalid month or year");
+        return walletService.getStatement(userId, month, year);
     }
 }

@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -49,7 +50,7 @@ public class WalletControllerTests {
     @Test
     public void testGetStatement_Success_validation() {
         when(authUserUtils.getUserId(anyString())).thenReturn(TestUtil.USER1_NAME);
-        when(walletService.getStatement(anyString())).thenReturn(new ResponseEntity<>(TestUtil.StatementTestData.needStatementResponse(), HttpStatus.OK));
-        assertDoesNotThrow(() -> walletController.getStatement(TestUtil.TOKEN));
+        when(walletService.getStatement(anyString(), anyInt(), anyInt())).thenReturn(new ResponseEntity<>(TestUtil.StatementTestData.needStatementResponse(), HttpStatus.OK));
+        assertDoesNotThrow(() -> walletController.getStatement(TestUtil.TOKEN,1,2024));
     }
 }

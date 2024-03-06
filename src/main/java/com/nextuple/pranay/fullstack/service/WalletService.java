@@ -26,6 +26,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static dev.samstevens.totp.util.Utils.getDataUriForImage;
@@ -38,7 +39,7 @@ public class WalletService {
     private TransactionsRepo transactionsRepo;
     @Autowired
     private RechargesRepo rechargesRepo;
-
+//todo: trim balance to 2 decimal places
     TimeProvider timeProvider = new SystemTimeProvider();
     CodeGenerator codeGenerator = new DefaultCodeGenerator();
     CodeVerifier verifier = new DefaultCodeVerifier(codeGenerator, timeProvider);
@@ -105,13 +106,16 @@ public class WalletService {
         }
     }
     @Transactional
-    public ResponseEntity<GetStatementResponse> getStatement(String userId) {
+    public ResponseEntity<GetStatementResponse> getStatement(String userId, int month, int year) {
         Wallets wallet = walletsRepo.findById(userId).orElseThrow(
                 ()->new CustomException.EntityNotFoundException("Wallet not found")
         );
-        List<Transactions> fromTransactions = transactionsRepo.findAllByFromUIdIgnoreCase(userId);
-        List<Transactions> toTransactions = transactionsRepo.findAllByToUIdIgnoreCase(userId);
-        List<Recharges> recharges = rechargesRepo.findAllByuIdIgnoreCase(userId);
+        LocalDateTime startOfMonth = LocalDateTime.of(year, month, 1, 0, 0);
+        LocalDateTime endOfMonth = startOfMonth.plusMonths(1).minusNanos(1);
+
+        List<Transactions> fromTransactions = transactionsRepo.findAllByFromUIdIgnoreCaseAndCreatedBetween(userId, startOfMonth, endOfMonth);
+        List<Transactions> toTransactions = transactionsRepo.findAllByToUIdIgnoreCaseAndCreatedBetween(userId, startOfMonth, endOfMonth);
+        List<Recharges> recharges = rechargesRepo.findAllByuIdIgnoreCaseAndCreatedBetween(userId, startOfMonth, endOfMonth);
         GetStatementResponse response = new GetStatementResponse(wallet, fromTransactions, toTransactions, recharges);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

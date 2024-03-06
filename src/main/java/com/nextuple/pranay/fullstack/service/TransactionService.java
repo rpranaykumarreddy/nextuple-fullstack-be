@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TransactionService {
+    //todo: trim balance to 2 decimal places
     @Autowired
     private TransactionsRepo transactionsRepo;
     @Autowired

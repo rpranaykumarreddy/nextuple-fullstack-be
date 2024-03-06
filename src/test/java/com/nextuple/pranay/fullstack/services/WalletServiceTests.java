@@ -115,23 +115,27 @@ public class WalletServiceTests {
         when(walletsRepo.save(any())).thenThrow(new RuntimeException("A database error"));
         assertThrows(CustomException.UnableToSaveException.class, () -> walletService.confirmTotp(TestUtil.USER1_NAME, TestUtil.WalletTestData.TOTP_CODE));
     }
+
     @Test
     public void testGetStatement_Success() {
-        when(walletsRepo.findById(TestUtil.USER1_NAME)).thenReturn(java.util.Optional.of(TestUtil.WalletTestData.getWallet1Response()));
-        when(transactionsRepo.findAllByFromUIdIgnoreCase(TestUtil.USER1_NAME)).thenReturn(TestUtil.TransactionTestData.getFromTransactions());
-        when(transactionsRepo.findAllByToUIdIgnoreCase(TestUtil.USER1_NAME)).thenReturn(TestUtil.TransactionTestData.getToTransactions());
-        when(rechargesRepo.findAllByuIdIgnoreCase(TestUtil.USER1_NAME)).thenReturn(TestUtil.RechargeTestData.getRecharges());
-        ResponseEntity<GetStatementResponse> responseEntity = walletService.getStatement(TestUtil.USER1_NAME);
+        when(walletsRepo.findById(eq(TestUtil.USER1_NAME))).thenReturn(java.util.Optional.of(TestUtil.WalletTestData.getWallet1Response()));
+        when(transactionsRepo.findAllByFromUIdIgnoreCaseAndCreatedBetween(eq(TestUtil.USER1_NAME), any(), any())).thenReturn(TestUtil.TransactionTestData.getFromTransactions());
+        when(transactionsRepo.findAllByToUIdIgnoreCaseAndCreatedBetween(eq(TestUtil.USER1_NAME), any(), any())).thenReturn(TestUtil.TransactionTestData.getToTransactions());
+        when(rechargesRepo.findAllByuIdIgnoreCaseAndCreatedBetween(eq(TestUtil.USER1_NAME), any(), any())).thenReturn(TestUtil.RechargeTestData.getRecharges());
+
+        ResponseEntity<GetStatementResponse> responseEntity = walletService.getStatement(TestUtil.USER1_NAME, 3, 2024);
         GetStatementResponse expectedResponse = TestUtil.StatementTestData.needStatementResponse();
+
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getRecharges(), Objects.requireNonNull(responseEntity.getBody()).getRecharges());
-        assertEquals(expectedResponse.getCredits(),responseEntity.getBody().getCredits());
-        assertEquals(expectedResponse.getDebits(),responseEntity.getBody().getDebits());
-        assertEquals(LocalDateTime.class,responseEntity.getBody().getResponseTime().getClass());
+        assertEquals(expectedResponse.getCredits(), responseEntity.getBody().getCredits());
+        assertEquals(expectedResponse.getDebits(), responseEntity.getBody().getDebits());
+        assertEquals(LocalDateTime.class, responseEntity.getBody().getResponseTime().getClass());
     }
+
     @Test
     public void testGetStatement_EntityNotFoundException() {
         when(walletsRepo.findById(TestUtil.USER1_NAME)).thenReturn(java.util.Optional.empty());
-        assertThrows(CustomException.EntityNotFoundException.class, () -> walletService.getStatement(TestUtil.USER1_NAME));
+        assertThrows(CustomException.EntityNotFoundException.class, () -> walletService.getStatement(TestUtil.USER1_NAME, 3, 2024));
     }
 }

@@ -79,11 +79,11 @@ public class AuthControllerTests {
         assertDoesNotThrow(() -> authController.login(TestUtil.UserTestData.getLoginAuthRequest()));
     }
     @Test
-public void testLogin_UserNameEmpty_validation() {
+    public void testLogin_UserNameEmpty_validation() {
         LoginAuthRequest loginAuthRequest = TestUtil.UserTestData.getLoginAuthRequest();
         loginAuthRequest.setUsername("");
         CustomException.ValidationException validationException = assertThrows(CustomException.ValidationException.class, () -> authController.login(loginAuthRequest));
-        assertEquals("Username cannot be empty", validationException.getMessage());
+        assertEquals("Username or Email cannot be empty", validationException.getMessage());
     }
     @Test
     public void testLogin_PasswordEmpty_validation() {
