@@ -1,6 +1,7 @@
 package com.nextuple.pranay.fullstack.service;
 
 
+import com.nextuple.pranay.fullstack.dto.GetCashbackResponse;
 import com.nextuple.pranay.fullstack.dto.GetStatementResponse;
 import com.nextuple.pranay.fullstack.dto.GetWalletDetailsResponse;
 import com.nextuple.pranay.fullstack.dto.MessageResponse;
@@ -117,6 +118,13 @@ public class WalletService {
         List<Transactions> toTransactions = transactionsRepo.findAllByToUIdIgnoreCaseAndCreatedBetween(userId, startOfMonth, endOfMonth);
         List<Recharges> recharges = rechargesRepo.findAllByuIdIgnoreCaseAndCreatedBetween(userId, startOfMonth, endOfMonth);
         GetStatementResponse response = new GetStatementResponse(wallet, fromTransactions, toTransactions, recharges);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    public ResponseEntity<GetCashbackResponse> getCashback(String userId, int month, int year) {
+        LocalDateTime startOfMonth = LocalDateTime.of(year, month, 1, 0, 0);
+        LocalDateTime endOfMonth = startOfMonth.plusMonths(1).minusNanos(1);
+        List<Recharges> recharges = rechargesRepo.findAllByuIdIgnoreCaseAndCreatedBetween(userId, startOfMonth, endOfMonth);
+        GetCashbackResponse response = new GetCashbackResponse(recharges);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

@@ -1,5 +1,6 @@
 package com.nextuple.pranay.fullstack.services;
 
+import com.nextuple.pranay.fullstack.dto.GetCashbackResponse;
 import com.nextuple.pranay.fullstack.dto.GetStatementResponse;
 import com.nextuple.pranay.fullstack.dto.GetWalletDetailsResponse;
 import com.nextuple.pranay.fullstack.exception.CustomException;
@@ -137,5 +138,15 @@ public class WalletServiceTests {
     public void testGetStatement_EntityNotFoundException() {
         when(walletsRepo.findById(TestUtil.USER1_NAME)).thenReturn(java.util.Optional.empty());
         assertThrows(CustomException.EntityNotFoundException.class, () -> walletService.getStatement(TestUtil.USER1_NAME, 3, 2024));
+    }
+    @Test
+    public void testGetCashback_Success() {
+        when(rechargesRepo.findAllByuIdIgnoreCaseAndCreatedBetween(eq(TestUtil.USER1_NAME), any(), any())).thenReturn(TestUtil.RechargeTestData.getRecharges());
+        ResponseEntity<GetCashbackResponse> responseEntity = walletService.getCashback(TestUtil.USER1_NAME, 3, 2024);
+        GetCashbackResponse expectedResponse = TestUtil.CashbackTestData.needCashbackResponse();
+
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(expectedResponse.getRecharges(), Objects.requireNonNull(responseEntity.getBody()).getRecharges());
+
     }
 }

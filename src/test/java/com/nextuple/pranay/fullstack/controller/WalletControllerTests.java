@@ -61,4 +61,17 @@ public class WalletControllerTests {
         CustomException.ValidationException validationException = assertThrows(CustomException.ValidationException.class, () -> walletController.getStatement(TestUtil.TOKEN,0,2024));
         assertEquals("Invalid month or year", validationException.getMessage());
     }
+    @Test
+    public void testGetCashback_Success_validation() {
+        when(authUserUtils.getUserId(anyString())).thenReturn(TestUtil.USER1_NAME);
+        when(walletService.getCashback(anyString(), anyInt(), anyInt())).thenReturn(new ResponseEntity<>(TestUtil.CashbackTestData.needCashbackResponse(), HttpStatus.OK));
+        assertDoesNotThrow(() -> walletController.getCashback(TestUtil.TOKEN,1,2024));
+    }
+    @Test
+    public void testGetCashback_Failure_validation() {
+        when(authUserUtils.getUserId(anyString())).thenReturn(TestUtil.USER1_NAME);
+        when(walletService.getCashback(anyString(), anyInt(), anyInt())).thenReturn(new ResponseEntity<>(TestUtil.CashbackTestData.needCashbackResponse(), HttpStatus.OK));
+        CustomException.ValidationException validationException = assertThrows(CustomException.ValidationException.class, () -> walletController.getCashback(TestUtil.TOKEN,0,2024));
+        assertEquals("Invalid month or year", validationException.getMessage());
+    }
 }

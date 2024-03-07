@@ -15,6 +15,7 @@ public class TestUtil {
     public static final String USER1_NAME = "user1";
     public static final String USER2_NAME = "user2";
     public static final String TOKEN = "Bearer token";
+
     public static class UserTestData {
         public static final String USER1_EMAIL = "user1@gmail.com";
         public static final String USER1_PASSWORD = "password1";
@@ -142,6 +143,11 @@ public class TestUtil {
                     TransactionTestData.getFromTransactions(),
                     TransactionTestData.getToTransactions(),
                     RechargeTestData.getRecharges());
+        }
+    }
+    public static class CashbackTestData{
+        public static GetCashbackResponse needCashbackResponse() {
+            return new GetCashbackResponse(RechargeTestData.getRecharges());
         }
     }
         /*
