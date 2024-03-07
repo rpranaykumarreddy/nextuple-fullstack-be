@@ -22,6 +22,9 @@ public class AddUserRequest {
         if (username == null || username.isEmpty()) {
             throw new CustomException.ValidationException("Username cannot be empty");
         }
+        if(!username.matches("^[a-z0-9]*$")){
+            throw new CustomException.ValidationException("Username can only contain alphanumeric characters");
+        }
         if (email == null || email.isEmpty()) {
             throw new CustomException.ValidationException("Email cannot be empty");
         }

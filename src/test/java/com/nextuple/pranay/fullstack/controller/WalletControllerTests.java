@@ -3,6 +3,7 @@ package com.nextuple.pranay.fullstack.controller;
 
 import com.nextuple.pranay.fullstack.TestUtil;
 import com.nextuple.pranay.fullstack.dto.MessageResponse;
+import com.nextuple.pranay.fullstack.exception.CustomException;
 import com.nextuple.pranay.fullstack.service.WalletService;
 import com.nextuple.pranay.fullstack.utils.AuthUserUtils;
 import dev.samstevens.totp.exceptions.QrGenerationException;
@@ -13,7 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -52,5 +53,12 @@ public class WalletControllerTests {
         when(authUserUtils.getUserId(anyString())).thenReturn(TestUtil.USER1_NAME);
         when(walletService.getStatement(anyString(), anyInt(), anyInt())).thenReturn(new ResponseEntity<>(TestUtil.StatementTestData.needStatementResponse(), HttpStatus.OK));
         assertDoesNotThrow(() -> walletController.getStatement(TestUtil.TOKEN,1,2024));
+    }
+    @Test
+    public void testGetStatement_Failure_validation() {
+        when(authUserUtils.getUserId(anyString())).thenReturn(TestUtil.USER1_NAME);
+        when(walletService.getStatement(anyString(), anyInt(), anyInt())).thenReturn(new ResponseEntity<>(TestUtil.StatementTestData.needStatementResponse(), HttpStatus.OK));
+        CustomException.ValidationException validationException = assertThrows(CustomException.ValidationException.class, () -> walletController.getStatement(TestUtil.TOKEN,0,2024));
+        assertEquals("Invalid month or year", validationException.getMessage());
     }
 }

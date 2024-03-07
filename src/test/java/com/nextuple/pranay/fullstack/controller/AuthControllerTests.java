@@ -42,6 +42,20 @@ public class AuthControllerTests {
         CustomException.ValidationException validationException = assertThrows(CustomException.ValidationException.class, () -> authController.addNewUser(addUserRequest));
         assertEquals("Username cannot be empty", validationException.getMessage());
     }
+    @Test
+    public void testAddNewUser_InvalidUserName_validation_1() {
+        AddUserRequest addUserRequest = TestUtil.UserTestData.getUser1Request();
+        addUserRequest.setUsername("test user");
+        CustomException.ValidationException validationException = assertThrows(CustomException.ValidationException.class, () -> authController.addNewUser(addUserRequest));
+        assertEquals("Username can only contain alphanumeric characters", validationException.getMessage());
+    }
+    @Test
+    public void testAddNewUser_InvalidUserName_validation_2() {
+        AddUserRequest addUserRequest = TestUtil.UserTestData.getUser1Request();
+        addUserRequest.setUsername("test@user");
+        CustomException.ValidationException validationException = assertThrows(CustomException.ValidationException.class, () -> authController.addNewUser(addUserRequest));
+        assertEquals("Username can only contain alphanumeric characters", validationException.getMessage());
+    }
 
     @Test
     public void testAddNewUser_EmailEmpty_validation() {
