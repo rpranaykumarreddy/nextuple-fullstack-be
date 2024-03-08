@@ -15,7 +15,7 @@ public class InitTransactionRequest {
     public void validate() {
         setTo(to.toLowerCase());
         if (to == null || to.isEmpty()) {
-            throw new CustomException.ValidationException("To address cannot be empty");
+            throw new CustomException.ValidationException("Receiver's username cannot be empty");
         }
         if (amount <= 0) {
             throw new CustomException.ValidationException("Amount should be greater than 0");

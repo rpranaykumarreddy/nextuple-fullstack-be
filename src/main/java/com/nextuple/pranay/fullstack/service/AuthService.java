@@ -41,7 +41,7 @@ public class AuthService {
            throw new CustomException.EntityExistsException("Username already exists. Please try another username");
         }
         if(usersRepo.existsByEmailIgnoreCase(addUserRequest.getEmail())){
-            throw new CustomException.EntityExistsException("Email Exists. Please try login with your email or try another email.");
+            throw new CustomException.EntityExistsException("Email already exists. Please try login with another email.");
         }
         Users userDB = addUserRequest.toUser();
         userDB.setPassword(passwordEncoder.encode(userDB.getPassword()));
@@ -53,10 +53,10 @@ public class AuthService {
             userResponse=usersRepo.save(userDB);
             walletsRepo.save(wallet);
         } catch (Exception e) {
-            throw new CustomException.UnableToSaveException("Unable to save user");
+            throw new CustomException.UnableToSaveException("Unable to register user");
         }
         return new ResponseEntity<>(
-                new MessageResponse("User Created Successfully with username: "+userResponse.getUsername()),
+                new MessageResponse("Registration Successfully with username: "+userResponse.getUsername()),
                 HttpStatus.CREATED);
     }
     public ResponseEntity<LoginAuthResponse> login(LoginAuthRequest loginDto) {

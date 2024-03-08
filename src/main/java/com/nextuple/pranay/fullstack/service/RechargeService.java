@@ -26,7 +26,7 @@ public class RechargeService {
     @Transactional
     public ResponseEntity<GetWalletDetailsResponse> rechargeWallet(String userId, double amount){
         Wallets wallet = walletsRepo.findById(userId).orElseThrow(
-                ()-> new CustomException.EntityNotFoundException("Wallet not found")
+                ()-> new CustomException.EntityNotFoundException("Your wallet not found. Contact support team.")
         );
         double cashback = Math.ceil(Math.random()*amount*0.01);
 
@@ -43,7 +43,7 @@ public class RechargeService {
             rechargesRepo.save(recharge);
             walletsRepo.save(wallet);
         } catch (Exception e) {
-            throw new CustomException.UnableToSaveException("Unable to save recharge");
+            throw new CustomException.UnableToSaveException("Unable to recharge your wallet");
         }
         GetWalletDetailsResponse response = new GetWalletDetailsResponse(wallet);
         return new ResponseEntity<>(response, HttpStatus.OK);

@@ -40,13 +40,12 @@ public class WalletService {
     private TransactionsRepo transactionsRepo;
     @Autowired
     private RechargesRepo rechargesRepo;
-//todo: trim balance to 2 decimal places
     TimeProvider timeProvider = new SystemTimeProvider();
     CodeGenerator codeGenerator = new DefaultCodeGenerator();
     CodeVerifier verifier = new DefaultCodeVerifier(codeGenerator, timeProvider);
     public ResponseEntity<GetWalletDetailsResponse> getWalletDetails(String userId) {
         Wallets wallet = walletsRepo.findById(userId).orElseThrow(
-                () -> new CustomException.EntityNotFoundException("Wallet not found"));
+                () -> new CustomException.EntityNotFoundException("Your wallet not found. Contact support team."));
         GetWalletDetailsResponse response = new GetWalletDetailsResponse(wallet);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -55,22 +54,22 @@ public class WalletService {
         SecretGenerator secretGenerator = new DefaultSecretGenerator();
         String secret = secretGenerator.generate();
         Wallets wallet = walletsRepo.findById(userId).orElseThrow(
-                ()->new CustomException.EntityNotFoundException("Wallet not found")
+                ()->new CustomException.EntityNotFoundException("Your wallet not found. Contact support team.")
         );
         if(wallet.isTotpEnabled()){
-            throw new CustomException.ValidationException("Totp already enabled");
+            throw new CustomException.ValidationException("TOTP already enabled");
         }
         wallet.setSecretKey(secret);
         try {
             walletsRepo.save(wallet);
         } catch (Exception e) {
-            throw new CustomException.UnableToSaveException("Unable to save");
+            throw new CustomException.UnableToSaveException("Issue in enabling TOTP");
         }
         QrData data = new QrData.Builder()
                 .label(userId)
                 .secret(secret)
-                .issuer("RPKR")
-                .algorithm(HashingAlgorithm.SHA1) // More on this below
+                .issuer("Infinitum Bank")
+                .algorithm(HashingAlgorithm.SHA1)
                 .digits(6)
                 .period(30)
                 .build();
@@ -84,13 +83,13 @@ public class WalletService {
 
     public ResponseEntity<Boolean> confirmTotp(String userId, String code) {
         Wallets wallet = walletsRepo.findById(userId).orElseThrow(
-                ()->new CustomException.EntityNotFoundException("Wallet not found")
+                ()->new CustomException.EntityNotFoundException("Your wallet not found. Contact support team.")
         );
         if(wallet.getSecretKey()==null || wallet.getSecretKey().isEmpty()){
-            throw new CustomException.ValidationException("Secret key not found");
+            throw new CustomException.ValidationException("QR Code data not found");
         }
         if(wallet.isTotpEnabled()){
-            throw new CustomException.ValidationException("Totp already enabled");
+            throw new CustomException.ValidationException("TOTP already enabled");
         }
         String secret = wallet.getSecretKey();
         boolean successful = verifier.isValidCode(secret, code);
@@ -99,17 +98,17 @@ public class WalletService {
                 wallet.setTotpEnabled(true);
                 walletsRepo.save(wallet);
             } catch (Exception e) {
-                throw new CustomException.UnableToSaveException("Unable to save");
+                throw new CustomException.UnableToSaveException("Issue in enabling TOTP");
             }
             return new ResponseEntity<>(true, HttpStatus.CREATED);
         }else{
-            throw new CustomException.ValidationException("Invalid code");
+            throw new CustomException.ValidationException("Incorrect TOTP");
         }
     }
     @Transactional
     public ResponseEntity<GetStatementResponse> getStatement(String userId, int month, int year) {
         Wallets wallet = walletsRepo.findById(userId).orElseThrow(
-                ()->new CustomException.EntityNotFoundException("Wallet not found")
+                ()->new CustomException.EntityNotFoundException("Your wallet not found. Contact support team.")
         );
         LocalDateTime startOfMonth = LocalDateTime.of(year, month, 1, 0, 0);
         LocalDateTime endOfMonth = startOfMonth.plusMonths(1).minusNanos(1);

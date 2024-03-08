@@ -48,13 +48,13 @@ public class TransactionService {
             throw new CustomException.BadRequestException("Invalid amount");
         }
         Wallets fromWallet = walletsRepo.findById(userId).orElseThrow(
-                () -> new CustomException.EntityNotFoundException("Your Wallet not found")
+                () -> new CustomException.EntityNotFoundException("Your wallet not found. Contact support team.")
         );
         if (fromWallet.getBalance() < amount) {
-            throw new CustomException.BadRequestException("insufficient balance");
+            throw new CustomException.BadRequestException("Insufficient balance for the transaction");
         }
         Wallets toWallet = walletsRepo.findById(toWalletId).orElseThrow(
-                () -> new CustomException.EntityNotFoundException("Reciever Wallet not found")
+                () -> new CustomException.EntityNotFoundException("Receiver's wallet not found")
         );
         Transactions transaction = new Transactions();
         transaction.setFromUId(userId);
@@ -65,7 +65,7 @@ public class TransactionService {
         try{
             transactionsRepo.save(transaction);
         }catch (Exception e){
-            throw new CustomException.UnableToSaveException("Unable to save transaction");
+            throw new CustomException.UnableToSaveException("Unable to initiate transaction");
         }
         InitTransactionResponse response = new InitTransactionResponse();
         response.copyTransactionId(transaction);
@@ -75,9 +75,9 @@ public class TransactionService {
     @Transactional
     public ResponseEntity<GetWalletDetailsResponse> confirmTransaction(String userId, String transactionId, String code) {
         Transactions transaction = transactionsRepo.findById(transactionId).orElseThrow(
-                () -> new CustomException.EntityNotFoundException("Transaction not found"));
+                () -> new CustomException.EntityNotFoundException("Transaction not initiated"));
         if (!transaction.getFromUId().equals(userId)) {
-            throw new CustomException.UnauthorizedException("Unauthorized");
+            throw new CustomException.UnauthorizedException("Unauthorized action");
         }
         if (transaction.getStatus() != Transactions.TransactionStatus.INIT) {
             throw new CustomException.BadRequestException("Invalid transaction status");
@@ -87,27 +87,27 @@ public class TransactionService {
             try{
                 transactionsRepo.save(transaction);
             }catch (Exception e){
-                throw new CustomException.UnableToSaveException("Unable to save transaction & transaction timeout");
+                throw new CustomException.UnableToSaveException("Transaction timeout & unable to update status");
             }
             throw new CustomException.BadRequestException("Transaction timeout");
         }
         Wallets fromWallet = walletsRepo.findById(userId).orElseThrow(
-                () -> new CustomException.EntityNotFoundException("Wallet not found")
+                () -> new CustomException.EntityNotFoundException("Your wallet not found. Contact support team.")
         );
         Wallets toWallet = walletsRepo.findById(transaction.getToUId()).orElseThrow(
-                () -> new CustomException.EntityNotFoundException("Wallet not found")
+                () -> new CustomException.EntityNotFoundException("Receiver's wallet not found")
         );
         if (fromWallet.getBalance() < transaction.getAmount()) {
-            throw new CustomException.BadRequestException("insufficient balance");
+            throw new CustomException.BadRequestException("Insufficient balance for the transaction");
         }
         if(fromWallet.isTotpEnabled() && (code == null || code.isEmpty())){
-            throw new CustomException.BadRequestException("Invalid code");
+            throw new CustomException.BadRequestException("Please enter TOTP");
         }
         if(fromWallet.isTotpEnabled() && !fromWallet.getSecretKey().isEmpty()){
             String secret = fromWallet.getSecretKey();
             boolean successful = verifier.isValidCode(secret, code);
             if (!successful) {
-                throw new CustomException.BadRequestException("Invalid code");
+                throw new CustomException.BadRequestException("Incorrect TOTP");
             }
         }
         fromWallet.setBalance(fromWallet.getBalance() - transaction.getAmount());
@@ -118,7 +118,7 @@ public class TransactionService {
             walletsRepo.save(toWallet);
             transactionsRepo.save(transaction);
         }catch (Exception e){
-            throw new CustomException.UnableToSaveException("Unable to save transaction");
+            throw new CustomException.UnableToSaveException("Unable to complete transaction");
         }
         GetWalletDetailsResponse response = new GetWalletDetailsResponse(fromWallet);
         return new ResponseEntity<>(response,HttpStatus.OK);
@@ -126,10 +126,10 @@ public class TransactionService {
 
     public ResponseEntity<MessageResponse> cancelTransaction(String userId, String tranactionId) {
         Transactions transaction = transactionsRepo.findById(tranactionId).orElseThrow(
-                () -> new CustomException.EntityNotFoundException("Transaction not found")
+                () -> new CustomException.EntityNotFoundException("Transaction not initiated")
         );
         if (!transaction.getFromUId().equals(userId)) {
-            throw new CustomException.UnauthorizedException("Unauthorized");
+            throw new CustomException.UnauthorizedException("Unauthorized action");
         }
         if (transaction.getStatus() != Transactions.TransactionStatus.INIT) {
             throw new CustomException.BadRequestException("Invalid transaction status");
