@@ -56,7 +56,7 @@ public class AuthService {
             throw new CustomException.UnableToSaveException("Unable to register user");
         }
         return new ResponseEntity<>(
-                new MessageResponse("Registration Successfully with username: "+userResponse.getUsername()),
+                new MessageResponse("Registration successful with username: "+userResponse.getUsername()),
                 HttpStatus.CREATED);
     }
     public ResponseEntity<LoginAuthResponse> login(LoginAuthRequest loginDto) {
