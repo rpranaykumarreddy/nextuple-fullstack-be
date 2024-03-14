@@ -28,7 +28,7 @@ public class RechargeService {
         Wallets wallet = walletsRepo.findById(userId).orElseThrow(
                 ()-> new CustomException.EntityNotFoundException("Your wallet not found. Contact support team.")
         );
-        double cashback = Math.ceil(Math.random()*amount*0.01);
+        double cashback = Math.floor(Math.random()*amount*0.01);
 
         Recharges recharge = new Recharges();
         recharge.setAmount(amount);

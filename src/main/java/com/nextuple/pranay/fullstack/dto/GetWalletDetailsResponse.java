@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class GetWalletDetailsResponse {
     LocalDateTime responseTime = LocalDateTime.now();
     private double balance;

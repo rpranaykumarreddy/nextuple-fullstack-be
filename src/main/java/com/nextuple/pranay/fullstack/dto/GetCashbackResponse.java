@@ -10,8 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class GetCashbackResponse {
     LocalDateTime responseTime = LocalDateTime.now();
     List<RechargesDetails> recharges = new ArrayList<>();
