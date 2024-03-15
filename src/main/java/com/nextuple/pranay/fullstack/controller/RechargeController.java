@@ -22,6 +22,9 @@ public class RechargeController {
         if(amount <1){
             throw new CustomException.ValidationException("Your can only recharge with more than ₹1");
         }
+        if(amount > 100000){
+            throw new CustomException.ValidationException("Your cannot recharge with more than ₹100000");
+        }
         return rechargeService.rechargeWallet(userId, amount);
     }
 }

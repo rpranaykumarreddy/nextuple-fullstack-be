@@ -100,10 +100,10 @@ public class TransactionService {
         if (fromWallet.getBalance() < transaction.getAmount()) {
             throw new CustomException.BadRequestException("Insufficient balance for the transaction");
         }
-        if(fromWallet.isTotpEnabled() && (code == null || code.isEmpty())){
+        if(fromWallet.isTotpEnabled() && (code == null || code.isBlank())){
             throw new CustomException.BadRequestException("Please enter TOTP");
         }
-        if(fromWallet.isTotpEnabled() && !fromWallet.getSecretKey().isEmpty()){
+        if(fromWallet.isTotpEnabled() && !fromWallet.getSecretKey().isBlank()){
             String secret = fromWallet.getSecretKey();
             boolean successful = verifier.isValidCode(secret, code);
             if (!successful) {

@@ -80,6 +80,15 @@ public class TestUtil {
         public static InitTransactionRequest getInitTransactionRequest1() {
             return new InitTransactionRequest(USER2_NAME, TRANSACTION1_AMOUNT);
         }
+        public static InitTransactionRequest getInitTransactionRequest2() {
+            return new InitTransactionRequest("  ", TRANSACTION1_AMOUNT);
+        }
+        public static InitTransactionRequest getInitTransactionRequest3() {
+            return new InitTransactionRequest(USER2_NAME, 0);
+        }
+        public static InitTransactionRequest getInitTransactionRequest4() {
+            return new InitTransactionRequest(USER2_NAME, 1_00_00_001);
+        }
         public static InitTransactionResponse getInitTransactionResponse() {
             return new InitTransactionResponse(TRANSACTION_ID, USER1_NAME, USER2_NAME, TRANSACTION1_AMOUNT, TRANSACTION1_CREATED.plusMinutes(1));
         }

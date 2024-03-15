@@ -85,7 +85,7 @@ public class WalletService {
         Wallets wallet = walletsRepo.findById(userId).orElseThrow(
                 ()->new CustomException.EntityNotFoundException("Your wallet not found. Contact support team.")
         );
-        if(wallet.getSecretKey()==null || wallet.getSecretKey().isEmpty()){
+        if(wallet.getSecretKey()==null || wallet.getSecretKey().isBlank()){
             throw new CustomException.ValidationException("QR Code data not found");
         }
         if(wallet.isTotpEnabled()){

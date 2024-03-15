@@ -19,19 +19,19 @@ public class AddUserRequest {
     public void validate() {
         setUsername(username.toLowerCase());
         setEmail(email.toLowerCase());
-        if (username == null || username.isEmpty()) {
+        if (username == null || username.isBlank()) {
             throw new CustomException.ValidationException("Username cannot be empty");
         }
         if(!username.matches("^[a-z0-9]*$")){
             throw new CustomException.ValidationException("Username can only contain alphanumeric characters");
         }
-        if (email == null || email.isEmpty()) {
+        if (email == null || email.isBlank()) {
             throw new CustomException.ValidationException("Email cannot be empty");
         }
         if(!email.contains("@") || !email.contains(".") || email.indexOf("@") > email.lastIndexOf(".")){
             throw new CustomException.ValidationException("Invalid Email");
         }
-        if (password == null || password.isEmpty()) {
+        if (password == null || password.isBlank()) {
             throw new CustomException.ValidationException("Password cannot be empty");
         }
         if(password.length() < 8){

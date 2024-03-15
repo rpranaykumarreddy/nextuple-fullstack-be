@@ -3,6 +3,7 @@ package com.nextuple.pranay.fullstack.controller;
 
 import com.nextuple.pranay.fullstack.TestUtil;
 import com.nextuple.pranay.fullstack.dto.MessageResponse;
+import com.nextuple.pranay.fullstack.exception.CustomException;
 import com.nextuple.pranay.fullstack.service.TransactionService;
 import com.nextuple.pranay.fullstack.utils.AuthUserUtils;
 import org.junit.jupiter.api.Test;
@@ -12,7 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
@@ -37,6 +38,24 @@ public class TransactionControllerTests {
         when(authUserUtils.getUserId(anyString())).thenReturn(TestUtil.USER1_NAME);
         when(transactionService.initTransaction(anyString(), any())).thenReturn(new ResponseEntity<>(TestUtil.TransactionTestData.getInitTransactionResponse(), HttpStatus.OK));
         assertDoesNotThrow(() -> transactionController.initTransaction(TestUtil.TOKEN,TestUtil.TransactionTestData.getInitTransactionRequest1()));
+    }
+    @Test
+    public void testInitTransaction_ToBlank_validation() {
+        when(authUserUtils.getUserId(anyString())).thenReturn(TestUtil.USER1_NAME);
+        CustomException.ValidationException validationException = assertThrows(CustomException.ValidationException.class, () -> transactionController.initTransaction(TestUtil.TOKEN,TestUtil.TransactionTestData.getInitTransactionRequest2()));
+        assertEquals("Receiver's username cannot be empty", validationException.getMessage());
+    }
+    @Test
+    public void testInitTransaction_AmountMin_validation() {
+        when(authUserUtils.getUserId(anyString())).thenReturn(TestUtil.USER1_NAME);
+        CustomException.ValidationException validationException = assertThrows(CustomException.ValidationException.class, () -> transactionController.initTransaction(TestUtil.TOKEN,TestUtil.TransactionTestData.getInitTransactionRequest3()));
+        assertEquals("Amount should be greater than ₹0", validationException.getMessage());
+    }
+    @Test
+    public void testInitTransaction_AmountMax_validation() {
+        when(authUserUtils.getUserId(anyString())).thenReturn(TestUtil.USER1_NAME);
+        CustomException.ValidationException validationException = assertThrows(CustomException.ValidationException.class, () -> transactionController.initTransaction(TestUtil.TOKEN,TestUtil.TransactionTestData.getInitTransactionRequest4()));
+        assertEquals("Amount should be less than ₹1,00,00,000", validationException.getMessage());
     }
     @Test
     public void testConfirmTransaction_Success_validation() {

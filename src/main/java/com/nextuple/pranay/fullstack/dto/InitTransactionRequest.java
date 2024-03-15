@@ -14,11 +14,14 @@ public class InitTransactionRequest {
 
     public void validate() {
         setTo(to.toLowerCase());
-        if (to == null || to.isEmpty()) {
+        if (to == null || to.isBlank()) {
             throw new CustomException.ValidationException("Receiver's username cannot be empty");
         }
         if (amount <= 0) {
-            throw new CustomException.ValidationException("Amount should be greater than 0");
+            throw new CustomException.ValidationException("Amount should be greater than ₹0");
+        }
+        if (amount > 1_00_00_000){
+            throw new CustomException.ValidationException("Amount should be less than ₹1,00,00,000");
         }
     }
 }
