@@ -51,7 +51,7 @@ public class TransactionsServiceTests {
         assertEquals(TestUtil.TransactionTestData.getTransaction1_InitStatus().getFromUId(), Objects.requireNonNull(responseEntity.getBody()).getFrom());
         assertEquals(TestUtil.TransactionTestData.getTransaction1_InitStatus().getToUId(), responseEntity.getBody().getTo());
         assertEquals(TestUtil.TransactionTestData.getTransaction1_InitStatus().getAmount(), responseEntity.getBody().getAmount());
-        assertEquals(LocalDateTime.class, responseEntity.getBody().getCreated().getClass());
+        assertEquals(LocalDateTime.class, responseEntity.getBody().getExpire().getClass());
     }
     @Test
     public void testInitTransaction_InvalidAmountException() {

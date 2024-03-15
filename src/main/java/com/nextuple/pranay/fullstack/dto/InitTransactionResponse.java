@@ -15,13 +15,13 @@ public class InitTransactionResponse {
     private String from;
     private String to;
     private double amount;
-    private LocalDateTime created;
+    private LocalDateTime expire;
 
-    public void copyTransactionId(Transactions transaction) {
+    public void copyTransactionId(Transactions transaction, LocalDateTime expire) {
         this.transactionId = transaction.getId();
         this.from = transaction.getFromUId();
         this.to = transaction.getToUId();
         this.amount = transaction.getAmount();
-        this.created = transaction.getCreated();
+        this.expire = expire;
     }
 }

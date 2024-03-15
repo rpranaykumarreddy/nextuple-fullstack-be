@@ -24,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TransactionService {
-    //todo: trim balance to 2 decimal places
     @Autowired
     private TransactionsRepo transactionsRepo;
     @Autowired
@@ -68,7 +67,7 @@ public class TransactionService {
             throw new CustomException.UnableToSaveException("Unable to initiate transaction");
         }
         InitTransactionResponse response = new InitTransactionResponse();
-        response.copyTransactionId(transaction);
+        response.copyTransactionId(transaction, transaction.getCreated().plusMinutes(1));
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
@@ -82,6 +81,7 @@ public class TransactionService {
         if (transaction.getStatus() != Transactions.TransactionStatus.INIT) {
             throw new CustomException.BadRequestException("Invalid transaction status");
         }
+        //Also need to change the initTransaction's response expire.
         if(transaction.getCreated().plusMinutes(1).isBefore(java.time.LocalDateTime.now())){
             transaction.setStatus(Transactions.TransactionStatus.TIMEOUT);
             try{

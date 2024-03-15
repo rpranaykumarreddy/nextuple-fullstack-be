@@ -81,7 +81,7 @@ public class TestUtil {
             return new InitTransactionRequest(USER2_NAME, TRANSACTION1_AMOUNT);
         }
         public static InitTransactionResponse getInitTransactionResponse() {
-            return new InitTransactionResponse(TRANSACTION_ID, USER1_NAME, USER2_NAME, TRANSACTION1_AMOUNT, TRANSACTION1_CREATED);
+            return new InitTransactionResponse(TRANSACTION_ID, USER1_NAME, USER2_NAME, TRANSACTION1_AMOUNT, TRANSACTION1_CREATED.plusMinutes(1));
         }
         public static Transactions getTransaction1_InitStatus() {
             return new Transactions(TRANSACTION_ID, USER1_NAME,USER2_NAME, TRANSACTION1_AMOUNT, Transactions.TransactionStatus.INIT, TRANSACTION1_CREATED);
