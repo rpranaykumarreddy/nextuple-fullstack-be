@@ -27,6 +27,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.data.domain.Pageable;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -40,9 +41,11 @@ public class WalletService {
     private TransactionsRepo transactionsRepo;
     @Autowired
     private RechargesRepo rechargesRepo;
+
     TimeProvider timeProvider = new SystemTimeProvider();
     CodeGenerator codeGenerator = new DefaultCodeGenerator();
     CodeVerifier verifier = new DefaultCodeVerifier(codeGenerator, timeProvider);
+
     public ResponseEntity<GetWalletDetailsResponse> getWalletDetails(String userId) {
         Wallets wallet = walletsRepo.findById(userId).orElseThrow(
                 () -> new CustomException.EntityNotFoundException("Your wallet not found. Contact support team."));
@@ -106,24 +109,21 @@ public class WalletService {
         }
     }
     @Transactional
-    public ResponseEntity<GetStatementResponse> getStatement(String userId, int month, int year) {
-        Wallets wallet = walletsRepo.findById(userId).orElseThrow(
-                ()->new CustomException.EntityNotFoundException("Your wallet not found. Contact support team.")
-        );
-        LocalDateTime startOfMonth = LocalDateTime.of(year, month, 1, 0, 0);
-        LocalDateTime endOfMonth = startOfMonth.plusMonths(1).minusNanos(1);
-        //month notation is 1-based
-        List<Transactions> fromTransactions = transactionsRepo.findAllByFromUIdIgnoreCaseAndCreatedBetween(userId, startOfMonth, endOfMonth);
-        List<Transactions> toTransactions = transactionsRepo.findAllByToUIdIgnoreCaseAndCreatedBetween(userId, startOfMonth, endOfMonth);
-        List<Recharges> recharges = rechargesRepo.findAllByuIdIgnoreCaseAndCreatedBetween(userId, startOfMonth, endOfMonth);
-        GetStatementResponse response = new GetStatementResponse(wallet, fromTransactions, toTransactions, recharges);
+    public ResponseEntity<GetStatementResponse> getStatement(String userId, int pageNo) {
+        List<Transactions> fromTransactions = transactionsRepo.findAllByFromUIdIgnoreCase(userId);
+        List<Transactions> toTransactions = transactionsRepo.findAllByToUIdIgnoreCase(userId);
+        List<Recharges> recharges = rechargesRepo.findAllByuIdIgnoreCase(userId);
+        GetStatementResponse response = new GetStatementResponse( fromTransactions, toTransactions, recharges, pageNo);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    public ResponseEntity<GetCashbackResponse> getCashback(String userId, int month, int year) {
-        LocalDateTime startOfMonth = LocalDateTime.of(year, month, 1, 0, 0);
-        LocalDateTime endOfMonth = startOfMonth.plusMonths(1).minusNanos(1);
-        List<Recharges> recharges = rechargesRepo.findAllByuIdIgnoreCaseAndCreatedBetween(userId, startOfMonth, endOfMonth);
-        GetCashbackResponse response = new GetCashbackResponse(recharges);
+
+    public ResponseEntity<GetCashbackResponse> getCashback(String userId, Pageable pageable) {
+        long noOfDocuments= rechargesRepo.countByuId(userId);
+        if(pageable.getOffset() > noOfDocuments){
+            throw new CustomException.ValidationException("Invalid page request");
+        }
+        List<Recharges> recharges = rechargesRepo.findAllByuIdIgnoreCaseOrderByCreatedDesc(userId, pageable);
+        GetCashbackResponse response = new GetCashbackResponse(recharges, noOfDocuments);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

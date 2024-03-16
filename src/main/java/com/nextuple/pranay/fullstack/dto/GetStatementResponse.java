@@ -1,8 +1,10 @@
 package com.nextuple.pranay.fullstack.dto;
 
+import com.nextuple.pranay.fullstack.exception.CustomException;
 import com.nextuple.pranay.fullstack.model.Recharges;
 import com.nextuple.pranay.fullstack.model.Transactions;
 import com.nextuple.pranay.fullstack.model.Wallets;
+import com.nextuple.pranay.fullstack.utils.Globals;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,90 +15,78 @@ import java.util.List;
 
 @Data
 public class GetStatementResponse {
+    int totalPages = 0;
     LocalDateTime responseTime = LocalDateTime.now();
-    GetWalletDetailsResponse wallet = new GetWalletDetailsResponse();
-    List<CreditDetails> credits= new ArrayList<>();
-    List<DebitDetails> debits= new ArrayList<>();
-    List<RechargesDetails> recharges= new ArrayList<>();
+    List<StatementDetails> statements = new ArrayList<>();
 
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class CreditDetails {
-        private StatementType type = StatementType.CREDIT;
+    public static class StatementDetails {
         private String id;
-        private String from;
+        private String type;
+        private String status;
+        private String fromTo;
         private double amount;
-        private Transactions.TransactionStatus status;
-        private LocalDateTime created;
+        private LocalDateTime createdAt;
+        public static String  statusToString(Transactions.TransactionStatus status){
+            if(status == Transactions.TransactionStatus.INIT){
+                return "Initiated";
+            }else if(status == Transactions.TransactionStatus.SUCCESSFUL){
+                return "Successful";
+            }else if(status == Transactions.TransactionStatus.CANCELLED){
+                return "Cancelled";
+            }else if(status == Transactions.TransactionStatus.TIMEOUT){
+                return "Timeout";
+            }
+            return "";
+        }
+        public static StatementDetails copyRecharge(Recharges recharge) {
+            StatementDetails statementDetails = new StatementDetails();
+            statementDetails.setId(recharge.getId());
+            statementDetails.setType("Recharge");
+            statementDetails.setStatus("Successful");
+            statementDetails.setFromTo("Self");
+            statementDetails.setAmount(recharge.getAmount());
+            statementDetails.setCreatedAt(recharge.getCreated());
+            return statementDetails;
+        }
 
-        public static CreditDetails copyTransaction(Transactions transaction) {
-            CreditDetails creditDetails = new CreditDetails();
-            creditDetails.setId(transaction.getId());
-            creditDetails.setFrom(transaction.getFromUId());
-            creditDetails.setAmount(transaction.getAmount());
-            creditDetails.setStatus(transaction.getStatus());
-            creditDetails.setCreated(transaction.getCreated());
-            return creditDetails;
+        public static StatementDetails copyFromTransactions(Transactions transactions) {
+            StatementDetails statementDetails = new StatementDetails();
+            statementDetails.setId(transactions.getId());
+            statementDetails.setType("Debit");
+            statementDetails.setStatus(statusToString(transactions.getStatus()));
+            statementDetails.setFromTo(transactions.getToUId());
+            statementDetails.setAmount(transactions.getAmount());
+            statementDetails.setCreatedAt(transactions.getCreated());
+            return statementDetails;
+        }
+
+        public static StatementDetails copyToTransactions(Transactions transactions) {
+            StatementDetails statementDetails = new StatementDetails();
+            statementDetails.setId(transactions.getId());
+            statementDetails.setType("Credit");
+            statementDetails.setStatus(statusToString(transactions.getStatus()));
+            statementDetails.setFromTo(transactions.getFromUId());
+            statementDetails.setAmount(transactions.getAmount());
+            statementDetails.setCreatedAt(transactions.getCreated());
+            return statementDetails;
         }
     }
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class DebitDetails {
-        private StatementType type = StatementType.DEBIT;
-        private String id;
-        private String to;
-        private double amount;
-        private Transactions.TransactionStatus status;
-        private LocalDateTime created;
 
-        public static DebitDetails copyTransaction(Transactions transaction) {
-            DebitDetails debitDetails = new DebitDetails();
-            debitDetails.setId(transaction.getId());
-            debitDetails.setTo(transaction.getToUId());
-            debitDetails.setAmount(transaction.getAmount());
-            debitDetails.setStatus(transaction.getStatus());
-            debitDetails.setCreated(transaction.getCreated());
-            return debitDetails;
-        }
-    }
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class RechargesDetails {
-        private StatementType type = StatementType.RECHARGE;
-        private String id;
-        private double amount;
-        private double cashback;
-        private LocalDateTime created;
-
-        public static RechargesDetails copyRecharge(Recharges recharge) {
-            RechargesDetails rechargesDetails = new RechargesDetails();
-            rechargesDetails.setId(recharge.getId());
-            rechargesDetails.setAmount(recharge.getAmount());
-            rechargesDetails.setCashback(recharge.getCashback());
-            rechargesDetails.setCreated(recharge.getCreated());
-            return rechargesDetails;
-        }
-    }
-    public enum StatementType {
-        RECHARGE, CREDIT, DEBIT
-    }
-
-    public GetStatementResponse(Wallets wallet, List<Transactions> fromTransactions, List<Transactions> toTransactions, List<Recharges> recharges) {
-        this.wallet = new GetWalletDetailsResponse(wallet);
-        List<CreditDetails> credits = new ArrayList<>();
-        List<DebitDetails> debits = new ArrayList<>();
-        List<RechargesDetails> rechargesDetails = new ArrayList<>();
-        fromTransactions.forEach(transaction -> debits.add(DebitDetails.copyTransaction(transaction)));
-        toTransactions.forEach(transaction -> credits.add(CreditDetails.copyTransaction(transaction)));
-        recharges.forEach(recharge -> rechargesDetails.add(RechargesDetails.copyRecharge(recharge)));
-        credits.sort((o1, o2) -> o2.getCreated().compareTo(o1.getCreated()));
-        debits.sort((o1, o2) -> o2.getCreated().compareTo(o1.getCreated()));
-        rechargesDetails.sort((o1, o2) -> o2.getCreated().compareTo(o1.getCreated()));
-        this.credits = credits;
-        this.debits = debits;
-        this.recharges = rechargesDetails;
+    public GetStatementResponse( List<Transactions> fromTransactions, List<Transactions> toTransactions, List<Recharges> recharges, int pageNo) {
+        long noOfDocuments = fromTransactions.size()+ toTransactions.size()+ recharges.size();
+        this.totalPages = (int) Math.ceil((double) noOfDocuments / Globals.pageSize);
+        if(pageNo  >= totalPages){
+            throw new CustomException.ValidationException("Invalid page request");}
+        List<StatementDetails> statementDetails = new ArrayList<>();
+        fromTransactions.forEach(transaction -> statementDetails.add(StatementDetails.copyFromTransactions(transaction)));
+        toTransactions.forEach(transaction -> statementDetails.add(StatementDetails.copyToTransactions(transaction)));
+        recharges.forEach(recharge -> statementDetails.add(StatementDetails.copyRecharge(recharge)));
+        statementDetails.sort((o1, o2) -> o2.getCreatedAt().compareTo(o1.getCreatedAt()));
+        int startIndex = (pageNo) * Globals.pageSize;
+        int endIndex = Math.min(startIndex+Globals.pageSize,statementDetails.size());
+        this.statements = statementDetails.subList(startIndex,endIndex);
     }
 }

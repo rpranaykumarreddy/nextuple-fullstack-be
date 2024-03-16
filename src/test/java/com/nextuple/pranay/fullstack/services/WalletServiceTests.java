@@ -9,12 +9,16 @@ import com.nextuple.pranay.fullstack.repo.TransactionsRepo;
 import com.nextuple.pranay.fullstack.repo.WalletsRepo;
 import com.nextuple.pranay.fullstack.service.WalletService;
 import com.nextuple.pranay.fullstack.TestUtil;
+import com.nextuple.pranay.fullstack.utils.Globals;
 import dev.samstevens.totp.code.CodeVerifier;
 import dev.samstevens.totp.exceptions.QrGenerationException;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -119,34 +123,38 @@ public class WalletServiceTests {
 
     @Test
     public void testGetStatement_Success() {
-        when(walletsRepo.findById(eq(TestUtil.USER1_NAME))).thenReturn(java.util.Optional.of(TestUtil.WalletTestData.getWallet1Response()));
-        when(transactionsRepo.findAllByFromUIdIgnoreCaseAndCreatedBetween(eq(TestUtil.USER1_NAME), any(), any())).thenReturn(TestUtil.TransactionTestData.getFromTransactions());
-        when(transactionsRepo.findAllByToUIdIgnoreCaseAndCreatedBetween(eq(TestUtil.USER1_NAME), any(), any())).thenReturn(TestUtil.TransactionTestData.getToTransactions());
-        when(rechargesRepo.findAllByuIdIgnoreCaseAndCreatedBetween(eq(TestUtil.USER1_NAME), any(), any())).thenReturn(TestUtil.RechargeTestData.getRecharges());
+        when(transactionsRepo.findAllByFromUIdIgnoreCase(TestUtil.USER1_NAME)).thenReturn(TestUtil.TransactionTestData.getFromTransactions());
+        when(transactionsRepo.findAllByToUIdIgnoreCase(TestUtil.USER1_NAME)).thenReturn(TestUtil.TransactionTestData.getToTransactions());
+        when(rechargesRepo.findAllByuIdIgnoreCase(TestUtil.USER1_NAME)).thenReturn(TestUtil.RechargeTestData.getRecharges());
 
-        ResponseEntity<GetStatementResponse> responseEntity = walletService.getStatement(TestUtil.USER1_NAME, 3, 2024);
+        ResponseEntity<GetStatementResponse> responseEntity = walletService.getStatement(TestUtil.USER1_NAME, 0);
         GetStatementResponse expectedResponse = TestUtil.StatementTestData.needStatementResponse();
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(expectedResponse.getRecharges(), Objects.requireNonNull(responseEntity.getBody()).getRecharges());
-        assertEquals(expectedResponse.getCredits(), responseEntity.getBody().getCredits());
-        assertEquals(expectedResponse.getDebits(), responseEntity.getBody().getDebits());
+        assertNotNull(responseEntity.getBody().getStatements());
+        assertEquals(expectedResponse.getStatements(),responseEntity.getBody().getStatements());
+        assertEquals(expectedResponse.getTotalPages(),responseEntity.getBody().getTotalPages());
         assertEquals(LocalDateTime.class, responseEntity.getBody().getResponseTime().getClass());
     }
 
     @Test
-    public void testGetStatement_EntityNotFoundException() {
-        when(walletsRepo.findById(TestUtil.USER1_NAME)).thenReturn(java.util.Optional.empty());
-        assertThrows(CustomException.EntityNotFoundException.class, () -> walletService.getStatement(TestUtil.USER1_NAME, 3, 2024));
-    }
-    @Test
     public void testGetCashback_Success() {
-        when(rechargesRepo.findAllByuIdIgnoreCaseAndCreatedBetween(eq(TestUtil.USER1_NAME), any(), any())).thenReturn(TestUtil.RechargeTestData.getRecharges());
-        ResponseEntity<GetCashbackResponse> responseEntity = walletService.getCashback(TestUtil.USER1_NAME, 3, 2024);
+        when(rechargesRepo.countByuId(any())).thenReturn((long)100);
+        when(rechargesRepo.findAllByuIdIgnoreCaseOrderByCreatedDesc(any(), any())).thenReturn(TestUtil.RechargeTestData.getRecharges());
+        Pageable pageable = PageRequest.of(0, Globals.pageSize, Sort.by(Sort.Direction.DESC,"created"));
+        ResponseEntity<GetCashbackResponse> responseEntity = walletService.getCashback(TestUtil.USER1_NAME,pageable );
         GetCashbackResponse expectedResponse = TestUtil.CashbackTestData.needCashbackResponse();
-
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getRecharges(), Objects.requireNonNull(responseEntity.getBody()).getRecharges());
+    }
+    @Test
+    public void testGetCashback_PageFail() {
+        when(rechargesRepo.countByuId(any())).thenReturn((long)100);
+        when(rechargesRepo.findAllByuIdIgnoreCaseOrderByCreatedDesc(any(), any())).thenReturn(TestUtil.RechargeTestData.getRecharges());
+        Pageable pageable = PageRequest.of(11, Globals.pageSize, Sort.by(Sort.Direction.DESC,"created"));
+
+        CustomException.ValidationException validationException = assertThrows(CustomException.ValidationException.class, () ->walletService.getCashback(TestUtil.USER1_NAME,pageable ));
+        assertEquals("Invalid page request", validationException.getMessage());
 
     }
 }

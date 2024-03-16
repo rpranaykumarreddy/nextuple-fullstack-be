@@ -82,11 +82,12 @@ public class AuthServiceTests {
     @Test
     public void testLogin_Success() {
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(null);
-        when(jwtTokenProvider.generateToken(any(Authentication.class))).thenReturn("token");
+        when(jwtTokenProvider.generateToken(any())).thenReturn("token");
         ResponseEntity<LoginAuthResponse> response = authService.login(TestUtil.UserTestData.getLoginAuthRequest());
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
+        assertEquals("token",response.getBody().getAccessToken());
     }
     @Test
     public void testCheckUsername_Success() {

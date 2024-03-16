@@ -15,8 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -51,27 +50,27 @@ public class WalletControllerTests {
     @Test
     public void testGetStatement_Success_validation() {
         when(authUserUtils.getUserId(anyString())).thenReturn(TestUtil.USER1_NAME);
-        when(walletService.getStatement(anyString(), anyInt(), anyInt())).thenReturn(new ResponseEntity<>(TestUtil.StatementTestData.needStatementResponse(), HttpStatus.OK));
-        assertDoesNotThrow(() -> walletController.getStatement(TestUtil.TOKEN,1,2024));
+        when(walletService.getStatement(anyString(), anyInt())).thenReturn(new ResponseEntity<>(TestUtil.StatementTestData.needStatementResponse(), HttpStatus.OK));
+        assertDoesNotThrow(() -> walletController.getStatement(TestUtil.TOKEN,0));
     }
     @Test
     public void testGetStatement_Failure_validation() {
         when(authUserUtils.getUserId(anyString())).thenReturn(TestUtil.USER1_NAME);
-        when(walletService.getStatement(anyString(), anyInt(), anyInt())).thenReturn(new ResponseEntity<>(TestUtil.StatementTestData.needStatementResponse(), HttpStatus.OK));
-        CustomException.ValidationException validationException = assertThrows(CustomException.ValidationException.class, () -> walletController.getStatement(TestUtil.TOKEN,0,2024));
-        assertEquals("Invalid month or year", validationException.getMessage());
+        when(walletService.getStatement(anyString(),  anyInt())).thenReturn(new ResponseEntity<>(TestUtil.StatementTestData.needStatementResponse(), HttpStatus.OK));
+        CustomException.ValidationException validationException = assertThrows(CustomException.ValidationException.class, () -> walletController.getStatement(TestUtil.TOKEN,-1));
+        assertEquals("Invalid page request", validationException.getMessage());
     }
     @Test
     public void testGetCashback_Success_validation() {
         when(authUserUtils.getUserId(anyString())).thenReturn(TestUtil.USER1_NAME);
-        when(walletService.getCashback(anyString(), anyInt(), anyInt())).thenReturn(new ResponseEntity<>(TestUtil.CashbackTestData.needCashbackResponse(), HttpStatus.OK));
-        assertDoesNotThrow(() -> walletController.getCashback(TestUtil.TOKEN,1,2024));
+        when(walletService.getCashback(anyString(), any())).thenReturn(new ResponseEntity<>(TestUtil.CashbackTestData.needCashbackResponse(), HttpStatus.OK));
+        assertDoesNotThrow(() -> walletController.getCashback(TestUtil.TOKEN,1));
     }
     @Test
     public void testGetCashback_Failure_validation() {
         when(authUserUtils.getUserId(anyString())).thenReturn(TestUtil.USER1_NAME);
-        when(walletService.getCashback(anyString(), anyInt(), anyInt())).thenReturn(new ResponseEntity<>(TestUtil.CashbackTestData.needCashbackResponse(), HttpStatus.OK));
-        CustomException.ValidationException validationException = assertThrows(CustomException.ValidationException.class, () -> walletController.getCashback(TestUtil.TOKEN,0,2024));
-        assertEquals("Invalid month or year", validationException.getMessage());
+        when(walletService.getCashback(anyString(), any())).thenReturn(new ResponseEntity<>(TestUtil.CashbackTestData.needCashbackResponse(), HttpStatus.OK));
+        CustomException.ValidationException validationException = assertThrows(CustomException.ValidationException.class, () -> walletController.getCashback(TestUtil.TOKEN,-1));
+        assertEquals("Invalid page request", validationException.getMessage());
     }
 }

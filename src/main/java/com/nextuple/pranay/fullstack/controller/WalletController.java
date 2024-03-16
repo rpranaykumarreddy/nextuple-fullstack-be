@@ -7,8 +7,12 @@ import com.nextuple.pranay.fullstack.dto.MessageResponse;
 import com.nextuple.pranay.fullstack.exception.CustomException;
 import com.nextuple.pranay.fullstack.service.WalletService;
 import com.nextuple.pranay.fullstack.utils.AuthUserUtils;
+import com.nextuple.pranay.fullstack.utils.Globals;
 import dev.samstevens.totp.exceptions.QrGenerationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,19 +45,19 @@ public class WalletController {
     }
 
     @GetMapping("/statement")
-    public ResponseEntity<GetStatementResponse> getStatement(@RequestHeader("Authorization") String token, @RequestParam int month, @RequestParam int year) {
+    public ResponseEntity<GetStatementResponse> getStatement(@RequestHeader("Authorization") String token,@RequestParam(defaultValue = "0") int page) {
         String userId = authUserUtils.getUserId(token);
-        //month should be between 1 and 12
-        if (month < 1 || month > 12 || year < 2024 || year > 9999)
-            throw new CustomException.ValidationException("Invalid month or year");
-        return walletService.getStatement(userId, month, year);
+        if (page< 0)
+            throw new CustomException.ValidationException("Invalid page request");
+        return walletService.getStatement(userId, page);
     }
+
     @GetMapping("/cashback")
-    public ResponseEntity<GetCashbackResponse> getCashback(@RequestHeader("Authorization") String token, @RequestParam int month, @RequestParam int year) {
+    public ResponseEntity<GetCashbackResponse> getCashback(@RequestHeader("Authorization") String token, @RequestParam(defaultValue = "0") int page) {
         String userId = authUserUtils.getUserId(token);
-        //month should be between 1 and 12
-        if (month < 1 || month > 12 || year < 2024 || year > 9999)
-            throw new CustomException.ValidationException("Invalid month or year");
-        return walletService.getCashback(userId, month, year);
+        if (page< 0)
+            throw new CustomException.ValidationException("Invalid page request");
+        Pageable pageable = PageRequest.of(page, Globals.pageSize,Sort.by(Sort.Direction.DESC,"created"));
+        return walletService.getCashback(userId, pageable);
     }
 }

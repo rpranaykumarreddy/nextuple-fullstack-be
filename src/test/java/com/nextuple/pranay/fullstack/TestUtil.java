@@ -148,15 +148,14 @@ public class TestUtil {
     public static class StatementTestData{
         public static GetStatementResponse needStatementResponse() {
             return new GetStatementResponse(
-                    WalletTestData.getWallet1Response(),
                     TransactionTestData.getFromTransactions(),
                     TransactionTestData.getToTransactions(),
-                    RechargeTestData.getRecharges());
+                    RechargeTestData.getRecharges(), 0);
         }
     }
     public static class CashbackTestData{
         public static GetCashbackResponse needCashbackResponse() {
-            return new GetCashbackResponse(RechargeTestData.getRecharges());
+            return new GetCashbackResponse(RechargeTestData.getRecharges(), 100);
         }
     }
         /*

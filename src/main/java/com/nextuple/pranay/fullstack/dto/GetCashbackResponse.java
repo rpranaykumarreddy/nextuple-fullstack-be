@@ -1,6 +1,7 @@
 package com.nextuple.pranay.fullstack.dto;
 
 import com.nextuple.pranay.fullstack.model.Recharges;
+import com.nextuple.pranay.fullstack.utils.Globals;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,11 +12,10 @@ import java.util.List;
 
 @Data
 public class GetCashbackResponse {
+    int totalPages = 0;
     LocalDateTime responseTime = LocalDateTime.now();
     List<RechargesDetails> recharges = new ArrayList<>();
     @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
     public static class RechargesDetails {
         private String id;
         private double amount;
@@ -32,7 +32,8 @@ public class GetCashbackResponse {
         }
     }
 
-    public GetCashbackResponse(List<Recharges> recharges) {
+    public GetCashbackResponse(List<Recharges> recharges, long noOfDocuments) {
+        this.totalPages = (int) Math.ceil((double) noOfDocuments / Globals.pageSize);
         List<RechargesDetails> rechargesDetails = new ArrayList<>();
         recharges.forEach(recharge -> rechargesDetails.add(RechargesDetails.copyRecharge(recharge)));
         rechargesDetails.sort((o1, o2) -> o2.getCreated().compareTo(o1.getCreated()));

@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Data
-@NoArgsConstructor
 public class GetWalletDetailsResponse {
     LocalDateTime responseTime = LocalDateTime.now();
     private double balance;
