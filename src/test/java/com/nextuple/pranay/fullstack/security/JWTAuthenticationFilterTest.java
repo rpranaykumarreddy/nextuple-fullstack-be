@@ -49,4 +49,23 @@ public class JWTAuthenticationFilterTest {
         verify(userDetailsService, times(1)).loadUserByUsername(anyString());
         verify(filterChain, times(1)).doFilter(request, response);
     }
+    @Test
+    public void testDoFilterInternal_failure() throws Exception {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        FilterChain filterChain = mock(FilterChain.class);
+
+        when(request.getHeader("Authorization")).thenReturn("Beare token");
+        when(jwtTokenProvider.validateToken(anyString())).thenReturn(true);
+        when(jwtTokenProvider.getUsername(anyString())).thenReturn("username");
+        when(userDetailsService.loadUserByUsername(anyString())).thenReturn(
+                new org.springframework.security.core.userdetails.User(
+                        "username",
+                        "password",
+                        new ArrayList<>()
+                )
+        );
+
+        jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
+    }
 }

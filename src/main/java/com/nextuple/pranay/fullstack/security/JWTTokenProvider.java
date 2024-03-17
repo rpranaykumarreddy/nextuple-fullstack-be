@@ -23,6 +23,7 @@ public class JWTTokenProvider {
     private long jwtExpirationDate;
     @Autowired
     private UsersRepo usersRepo;
+
     public String generateToken(Authentication authentication) {
         String userLogin = authentication.getName();
         String username = usersRepo.findByUsernameOrEmailIgnoreCase(userLogin,userLogin).orElseThrow(
@@ -48,6 +49,16 @@ public class JWTTokenProvider {
                 .build()
                 .parseClaimsJws(token).getBody();
         return claims.getSubject();
+    }
+
+    public String regenerateToken(String username){
+        Date currentDate = new Date();
+        Date expireDate = new Date(currentDate.getTime() + jwtExpirationDate);
+        return Jwts.builder().setSubject(username)
+                .setIssuedAt(currentDate)
+                .setExpiration(expireDate)
+                .signWith(key())
+                .compact();
     }
 
     public boolean validateToken(String token) {

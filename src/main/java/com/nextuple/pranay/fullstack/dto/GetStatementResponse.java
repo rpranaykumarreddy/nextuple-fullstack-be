@@ -30,16 +30,15 @@ public class GetStatementResponse {
         private double amount;
         private LocalDateTime createdAt;
         public static String  statusToString(Transactions.TransactionStatus status){
-            if(status == Transactions.TransactionStatus.INIT){
-                return "Initiated";
-            }else if(status == Transactions.TransactionStatus.SUCCESSFUL){
+            if(status == Transactions.TransactionStatus.SUCCESSFUL){
                 return "Successful";
             }else if(status == Transactions.TransactionStatus.CANCELLED){
                 return "Cancelled";
             }else if(status == Transactions.TransactionStatus.TIMEOUT){
                 return "Timeout";
+            }else {
+                return "Initiated";
             }
-            return "";
         }
         public static StatementDetails copyRecharge(Recharges recharge) {
             StatementDetails statementDetails = new StatementDetails();

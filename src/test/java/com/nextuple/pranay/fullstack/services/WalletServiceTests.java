@@ -4,6 +4,7 @@ import com.nextuple.pranay.fullstack.dto.GetCashbackResponse;
 import com.nextuple.pranay.fullstack.dto.GetStatementResponse;
 import com.nextuple.pranay.fullstack.dto.GetWalletDetailsResponse;
 import com.nextuple.pranay.fullstack.exception.CustomException;
+import com.nextuple.pranay.fullstack.model.Wallets;
 import com.nextuple.pranay.fullstack.repo.RechargesRepo;
 import com.nextuple.pranay.fullstack.repo.TransactionsRepo;
 import com.nextuple.pranay.fullstack.repo.WalletsRepo;
@@ -26,6 +27,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
@@ -86,10 +88,12 @@ public class WalletServiceTests {
     }
     @Test
     public void testConfirmTotp_Success() {
+        Wallets wallets= TestUtil.WalletTestData.getWallet1ResponseTotpToBeEnabled();
+        assertEquals(wallets.getUsername(), TestUtil.USER1_NAME);
         when(walletsRepo.findById(TestUtil.USER1_NAME)).thenReturn(java.util.Optional.of(TestUtil.WalletTestData.getWallet1ResponseTotpToBeEnabled()));
         when(verifier.isValidCode(anyString(), anyString())).thenReturn(true);
         when(walletsRepo.save(any())).thenReturn(TestUtil.WalletTestData.getWallet1ResponseTotpEnabled());
-        ResponseEntity<?> responseEntity = walletService.confirmTotp(TestUtil.USER1_NAME, TestUtil.WalletTestData.TOTP_CODE);
+        ResponseEntity<Boolean> responseEntity = walletService.confirmTotp(TestUtil.USER1_NAME, TestUtil.WalletTestData.TOTP_CODE);
         assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
     }
     @Test
@@ -129,7 +133,10 @@ public class WalletServiceTests {
 
         ResponseEntity<GetStatementResponse> responseEntity = walletService.getStatement(TestUtil.USER1_NAME, 0);
         GetStatementResponse expectedResponse = TestUtil.StatementTestData.needStatementResponse();
-
+    assertThrows(CustomException.ValidationException.class,()-> new GetStatementResponse(
+        TestUtil.TransactionTestData.getFromTransactions(),
+        TestUtil.TransactionTestData.getToTransactions(),
+        TestUtil.RechargeTestData.getRecharges(), 2));
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertNotNull(responseEntity.getBody().getStatements());
         assertEquals(expectedResponse.getStatements(),responseEntity.getBody().getStatements());
@@ -146,6 +153,7 @@ public class WalletServiceTests {
         GetCashbackResponse expectedResponse = TestUtil.CashbackTestData.needCashbackResponse();
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(expectedResponse.getRecharges(), Objects.requireNonNull(responseEntity.getBody()).getRecharges());
+        assertEquals(expectedResponse.getTotalPages(), Objects.requireNonNull(responseEntity.getBody().getTotalPages()));
     }
     @Test
     public void testGetCashback_PageFail() {

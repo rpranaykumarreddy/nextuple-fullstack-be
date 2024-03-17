@@ -73,6 +73,15 @@ public class AuthService {
         return new ResponseEntity<>(jwtAuthResponse, HttpStatus.OK);
     }
 
+    public ResponseEntity<LoginAuthResponse> regenerate(String oldToken, String username) {
+        String token = jwtTokenProvider.regenerateToken(username);
+        LoginAuthResponse jwtAuthResponse = new LoginAuthResponse();
+        jwtAuthResponse.setAccessToken(token);
+        return new ResponseEntity<>(jwtAuthResponse, HttpStatus.OK);
+    }
+
+
+
     public ResponseEntity<Boolean> checkUsername(String username) {
         return new ResponseEntity<>(!(usersRepo.existsByUsernameIgnoreCase(username)), HttpStatus.OK);
     }

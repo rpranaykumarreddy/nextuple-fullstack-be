@@ -8,6 +8,7 @@ import com.nextuple.pranay.fullstack.dto.LoginAuthResponse;
 import com.nextuple.pranay.fullstack.dto.MessageResponse;
 import com.nextuple.pranay.fullstack.exception.CustomException;
 import com.nextuple.pranay.fullstack.service.AuthService;
+import com.nextuple.pranay.fullstack.utils.AuthUserUtils;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -25,6 +26,8 @@ public class AuthControllerTests {
 
     @Mock
     private AuthService authService;
+    @Mock
+    private AuthUserUtils authUserUtils;
 
     @InjectMocks
     private AuthController authController;
@@ -90,6 +93,7 @@ public class AuthControllerTests {
     public void testLogin_Success_validation() {
         LoginAuthResponse loginAuthResponse = new LoginAuthResponse(TestUtil.TOKEN,"Bearer");
         when(authService.login(any())).thenReturn(new ResponseEntity<>(loginAuthResponse, HttpStatus.OK));
+        when(authUserUtils.getUserId(anyString())).thenReturn(TestUtil.USER1_NAME);
         assertDoesNotThrow(() -> authController.login(TestUtil.UserTestData.getLoginAuthRequest()));
     }
     @Test
@@ -105,6 +109,13 @@ public class AuthControllerTests {
         loginAuthRequest.setPassword("");
         CustomException.ValidationException validationException = assertThrows(CustomException.ValidationException.class, () -> authController.login(loginAuthRequest));
         assertEquals("Password cannot be empty", validationException.getMessage());
+    }
+    @Test
+    public void testRegenerate_Success_validation() {
+        LoginAuthResponse loginAuthResponse = new LoginAuthResponse(TestUtil.TOKEN,"Bearer");
+        when(authUserUtils.getUserId(anyString())).thenReturn(TestUtil.USER1_NAME);
+        when(authService.regenerate(anyString(),anyString())).thenReturn(new ResponseEntity<>(loginAuthResponse, HttpStatus.OK));
+        assertDoesNotThrow(() -> authController.regenerate("Bearer "+TestUtil.TOKEN));
     }
     @Test
     public void testCheckUsername_Success_validation() {

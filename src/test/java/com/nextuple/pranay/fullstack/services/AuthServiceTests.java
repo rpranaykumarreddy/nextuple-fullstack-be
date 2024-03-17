@@ -90,6 +90,15 @@ public class AuthServiceTests {
         assertEquals("token",response.getBody().getAccessToken());
     }
     @Test
+    public void testRegenerate_Success() {
+        when(jwtTokenProvider.regenerateToken(any())).thenReturn("token");
+        ResponseEntity<LoginAuthResponse> response = authService.regenerate(TestUtil.TOKEN,TestUtil.USER1_NAME);
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals("token",response.getBody().getAccessToken());
+    }
+    @Test
     public void testCheckUsername_Success() {
         when(usersRepo.existsByUsernameIgnoreCase(anyString())).thenReturn(true);
         ResponseEntity<Boolean> response = authService.checkUsername("username");

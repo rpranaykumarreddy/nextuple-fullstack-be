@@ -41,7 +41,14 @@ public class TestUtil {
             return new Wallets(USER1_NAME, USER1_BALANCE_INIT, null, false, USER1_UPDATED, USER1_CREATED);
         }
         public static Wallets getWallet1ResponseTotpToBeEnabled() {
-            return new Wallets(USER1_NAME, USER1_BALANCE_INIT, "secret",false, USER1_UPDATED, USER1_CREATED);
+            Wallets wallet= new Wallets();
+            wallet.setUsername(USER1_NAME);
+            wallet.setBalance(USER1_BALANCE_INIT);
+            wallet.setSecretKey("secret");
+            wallet.setTotpEnabled(false);
+            wallet.setUpdated(USER1_UPDATED);
+            wallet.setCreated(USER1_CREATED);
+            return wallet;
         }
         public static Wallets getWallet1ResponseTotpEnabled() {
             return new Wallets(USER1_NAME, USER1_BALANCE_INIT, "secretKey", true, USER1_UPDATED, USER1_CREATED);
@@ -107,11 +114,19 @@ public class TestUtil {
         public static Transactions getTransaction3() {
             return new Transactions(TRANSACTION_ID3, USER2_NAME,USER1_NAME, TRANSACTION3_AMOUNT, TRANSACTION3_STATUS, TRANSACTION3_CREATED);
         }
+        public static Transactions getTransaction1_INIT() {
+            return new Transactions(TRANSACTION_ID, USER1_NAME,USER2_NAME, TRANSACTION1_AMOUNT, Transactions.TransactionStatus.INIT, TRANSACTION1_CREATED);
+        }
+        public static Transactions getTransaction2_Timeout() {
+            return new Transactions(TRANSACTION_ID2, USER1_NAME,USER2_NAME, TRANSACTION2_AMOUNT, Transactions.TransactionStatus.TIMEOUT, TRANSACTION2_CREATED);
+        }
 
         public static List<Transactions> getFromTransactions() {
             return Arrays.asList(
                     getTransaction1(),
-                    getTransaction2()
+                    getTransaction2(),
+                    getTransaction1_INIT(),
+                    getTransaction2_Timeout()
             );
         }
 
