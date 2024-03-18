@@ -4,6 +4,7 @@ import com.nextuple.pranay.fullstack.dto.GetWalletDetailsResponse;
 import com.nextuple.pranay.fullstack.exception.CustomException;
 import com.nextuple.pranay.fullstack.service.RechargeService;
 import com.nextuple.pranay.fullstack.utils.AuthUserUtils;
+import com.nextuple.pranay.fullstack.utils.Globals;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,14 +17,14 @@ public class RechargeController {
     @Autowired
     private AuthUserUtils authUserUtils;
 
-    @PostMapping("/recharge")
+    @PostMapping(Globals.rechargeController_rechargeWalletMap)
     public ResponseEntity<GetWalletDetailsResponse> rechargeWallet(@RequestHeader("Authorization") String token, @RequestParam double amount){
         String userId = authUserUtils.getUserId(token);
         if(amount <1){
             throw new CustomException.ValidationException("Your can only recharge with more than ₹1");
         }
         if(amount > 100000){
-            throw new CustomException.ValidationException("Your cannot recharge with more than ₹100000");
+            throw new CustomException.ValidationException("Your cannot recharge with more than ₹1,00,000");
         }
         return rechargeService.rechargeWallet(userId, amount);
     }

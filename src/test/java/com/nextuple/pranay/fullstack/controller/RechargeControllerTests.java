@@ -43,6 +43,6 @@ public class RechargeControllerTests {
     public void testRechargeWallet_amountMaxValidation() {
         when(authUserUtils.getUserId(anyString())).thenReturn(TestUtil.USER1_NAME);
         CustomException.ValidationException exception = assertThrows(CustomException.ValidationException.class, () -> rechargeController.rechargeWallet(TestUtil.TOKEN, 100001));
-        assertEquals("Your cannot recharge with more than ₹100000", exception.getMessage());
+        assertEquals("Your cannot recharge with more than ₹1,00,000", exception.getMessage());
     }
 }

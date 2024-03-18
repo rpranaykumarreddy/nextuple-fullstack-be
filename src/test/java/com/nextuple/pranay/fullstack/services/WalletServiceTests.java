@@ -159,7 +159,7 @@ public class WalletServiceTests {
     public void testGetCashback_PageFail() {
         when(rechargesRepo.countByuId(any())).thenReturn((long)100);
         when(rechargesRepo.findAllByuIdIgnoreCaseOrderByCreatedDesc(any(), any())).thenReturn(TestUtil.RechargeTestData.getRecharges());
-        Pageable pageable = PageRequest.of(11, Globals.pageSize, Sort.by(Sort.Direction.DESC,"created"));
+        Pageable pageable = PageRequest.of((100/Globals.pageSize)+1, Globals.pageSize, Sort.by(Sort.Direction.DESC,"created"));
 
         CustomException.ValidationException validationException = assertThrows(CustomException.ValidationException.class, () ->walletService.getCashback(TestUtil.USER1_NAME,pageable ));
         assertEquals("Invalid page request", validationException.getMessage());

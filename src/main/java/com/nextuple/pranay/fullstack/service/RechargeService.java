@@ -17,7 +17,6 @@ import java.time.LocalDateTime;
 
 @Service
 public class RechargeService {
-    //todo: trim balance to 2 decimal places
     @Autowired
     private RechargesRepo rechargesRepo;
     @Autowired

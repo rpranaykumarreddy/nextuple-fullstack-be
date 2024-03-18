@@ -77,7 +77,7 @@ public class GetStatementResponse {
     public GetStatementResponse( List<Transactions> fromTransactions, List<Transactions> toTransactions, List<Recharges> recharges, int pageNo) {
         long noOfDocuments = fromTransactions.size()+ toTransactions.size()+ recharges.size();
         this.totalPages = (int) Math.ceil((double) noOfDocuments / Globals.pageSize);
-        if(pageNo  >= totalPages){
+        if((long) pageNo * Globals.pageSize > noOfDocuments){
             throw new CustomException.ValidationException("Invalid page request");}
         List<StatementDetails> statementDetails = new ArrayList<>();
         fromTransactions.forEach(transaction -> statementDetails.add(StatementDetails.copyFromTransactions(transaction)));

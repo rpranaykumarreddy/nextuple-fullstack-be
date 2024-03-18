@@ -4,16 +4,16 @@ import com.nextuple.pranay.fullstack.dto.AddUserRequest;
 import com.nextuple.pranay.fullstack.dto.LoginAuthRequest;
 import com.nextuple.pranay.fullstack.dto.LoginAuthResponse;
 import com.nextuple.pranay.fullstack.dto.MessageResponse;
-import com.nextuple.pranay.fullstack.exception.CustomException;
 import com.nextuple.pranay.fullstack.service.AuthService;
 import com.nextuple.pranay.fullstack.utils.AuthUserUtils;
+import com.nextuple.pranay.fullstack.utils.Globals;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin("*")
 @RestController
-@RequestMapping("/auth")
+@RequestMapping(Globals.authControllerMap)
 public class AuthController {
 
     @Autowired
@@ -21,24 +21,24 @@ public class AuthController {
     @Autowired
     private AuthUserUtils authUserUtils;
 
-    @PostMapping(value = "/register")
+    @PostMapping(Globals.authController_addNewUserMap)
     public ResponseEntity<MessageResponse> addNewUser(@RequestBody AddUserRequest addUserRequest){
         addUserRequest.validate();
         return authService.addUser(addUserRequest);
     }
 
-    @PostMapping(value = "/login")
+    @PostMapping(Globals.authController_loginMap)
     public ResponseEntity<LoginAuthResponse> login(@RequestBody LoginAuthRequest loginDto){
         loginDto.validate();
         return authService.login(loginDto);
     }
 
-    @PostMapping(value = "/regenerate")
+    @PostMapping(Globals.authController_regenerateMap)
     public ResponseEntity<LoginAuthResponse> regenerate(@RequestHeader("Authorization") String token){
         String username = authUserUtils.getUserId(token);
         return authService.regenerate(token,username);
     }
-    @GetMapping(value="/check-username/{username}")
+    @GetMapping(Globals.authController_checkUsernameMap)
     public ResponseEntity<Boolean> checkUsername(@PathVariable String username){
         String usernameIgnoreCase = username.toLowerCase();
         return authService.checkUsername(usernameIgnoreCase);

@@ -10,6 +10,7 @@ import com.nextuple.pranay.fullstack.model.Transactions;
 import com.nextuple.pranay.fullstack.model.Wallets;
 import com.nextuple.pranay.fullstack.repo.TransactionsRepo;
 import com.nextuple.pranay.fullstack.repo.WalletsRepo;
+import com.nextuple.pranay.fullstack.utils.Globals;
 import dev.samstevens.totp.code.CodeGenerator;
 import dev.samstevens.totp.code.CodeVerifier;
 import dev.samstevens.totp.code.DefaultCodeGenerator;
@@ -21,6 +22,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 @Service
 public class TransactionService {
@@ -67,7 +70,7 @@ public class TransactionService {
             throw new CustomException.UnableToSaveException("Unable to initiate transaction");
         }
         InitTransactionResponse response = new InitTransactionResponse();
-        response.copyTransactionId(transaction, transaction.getCreated().plusMinutes(1));
+        response.copyTransactionId(transaction, transaction.getCreated().plusMinutes(Globals.transactionTimeoutMins));
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
@@ -81,8 +84,7 @@ public class TransactionService {
         if (transaction.getStatus() != Transactions.TransactionStatus.INIT) {
             throw new CustomException.BadRequestException("Invalid transaction status");
         }
-        //Also need to change the initTransaction's response expire.
-        if(transaction.getCreated().plusMinutes(1).isBefore(java.time.LocalDateTime.now())){
+        if(transaction.getCreated().plusMinutes(Globals.transactionTimeoutMins).isBefore(LocalDateTime.now())){
             transaction.setStatus(Transactions.TransactionStatus.TIMEOUT);
             try{
                 transactionsRepo.save(transaction);
