@@ -22,13 +22,16 @@ public class AddUserRequest {
         if (username == null || username.isBlank()) {
             throw new CustomException.ValidationException("Username cannot be empty");
         }
+        if (username.length()<=3) {
+            throw new CustomException.ValidationException("Username should be more than 3 characters");
+        }
         if(!username.matches("^[a-z0-9]*$")){
             throw new CustomException.ValidationException("Username can only contain alphanumeric characters");
         }
         if (email == null || email.isBlank()) {
             throw new CustomException.ValidationException("Email cannot be empty");
         }
-        if(!email.contains("@") || !email.contains(".") || email.indexOf("@") > email.lastIndexOf(".")){
+        if(!email.contains("@") || !email.contains(".") || email.indexOf("@") + 1  >= email.lastIndexOf(".") || email.lastIndexOf(".") == email.length()-1 ){
             throw new CustomException.ValidationException("Invalid Email");
         }
         if (password == null || password.isBlank()) {

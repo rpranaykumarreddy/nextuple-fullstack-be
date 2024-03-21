@@ -59,6 +59,13 @@ public class AuthControllerTests {
         CustomException.ValidationException validationException = assertThrows(CustomException.ValidationException.class, () -> authController.addNewUser(addUserRequest));
         assertEquals("Username can only contain alphanumeric characters", validationException.getMessage());
     }
+    @Test
+    public void testAddNewUser_InvalidUserName_validation_3() {
+        AddUserRequest addUserRequest = TestUtil.UserTestData.getUser1Request();
+        addUserRequest.setUsername("2");
+        CustomException.ValidationException validationException = assertThrows(CustomException.ValidationException.class, () -> authController.addNewUser(addUserRequest));
+        assertEquals("Username should be more than 3 characters", validationException.getMessage());
+    }
 
     @Test
     public void testAddNewUser_EmailEmpty_validation() {
