@@ -136,6 +136,15 @@ public class TransactionService {
         if (transaction.getStatus() != Transactions.TransactionStatus.INIT) {
             throw new CustomException.BadRequestException("Invalid transaction status");
         }
+        if(transaction.getCreated().plusMinutes(Globals.transactionTimeoutMins).isBefore(LocalDateTime.now())){
+            transaction.setStatus(Transactions.TransactionStatus.TIMEOUT);
+            try{
+                transactionsRepo.save(transaction);
+            }catch (Exception e){
+                throw new CustomException.UnableToSaveException("Transaction timeout & unable to update status");
+            }
+            throw new CustomException.BadRequestException("Transaction timeout");
+        }
         transaction.setStatus(Transactions.TransactionStatus.CANCELLED);
         transactionsRepo.save(transaction);
         return new ResponseEntity<>(new MessageResponse("Transaction cancelled"), HttpStatus.OK);

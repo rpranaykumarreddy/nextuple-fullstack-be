@@ -1,0 +1,148 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > TransactionController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.nextuple.pranay.fullstack.controller</a>
+</div>
+
+<h1>Coverage Summary for Class: TransactionController (com.nextuple.pranay.fullstack.controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">TransactionController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (10/10)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.nextuple.pranay.fullstack.controller;
+&nbsp;
+&nbsp;import com.nextuple.pranay.fullstack.dto.GetWalletDetailsResponse;
+&nbsp;import com.nextuple.pranay.fullstack.dto.InitTransactionRequest;
+&nbsp;import com.nextuple.pranay.fullstack.dto.InitTransactionResponse;
+&nbsp;import com.nextuple.pranay.fullstack.dto.MessageResponse;
+&nbsp;import com.nextuple.pranay.fullstack.service.TransactionService;
+&nbsp;import com.nextuple.pranay.fullstack.utils.AuthUserUtils;
+&nbsp;import com.nextuple.pranay.fullstack.utils.Globals;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;
+&nbsp;@CrossOrigin(&quot;*&quot;)
+&nbsp;@RestController
+&nbsp;@RequestMapping(Globals.transactionControllerMap)
+<b class="fc">&nbsp;public class TransactionController {</b>
+&nbsp;    @Autowired
+&nbsp;    private TransactionService transactionService;
+&nbsp;    @Autowired
+&nbsp;    private AuthUserUtils authUserUtils;
+&nbsp;
+&nbsp;    @GetMapping(Globals.transactionController_checkWalletMap)
+&nbsp;    public ResponseEntity&lt;Boolean&gt; checkWallet(@PathVariable String username){
+<b class="fc">&nbsp;        String usernameIgnoreCase = username.toLowerCase();</b>
+<b class="fc">&nbsp;        return transactionService.checkUsername(usernameIgnoreCase);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping(Globals.transactionController_initTransactionMap)
+&nbsp;    public ResponseEntity&lt;InitTransactionResponse&gt; initTransaction(@RequestHeader(&quot;Authorization&quot;) String token, @RequestBody InitTransactionRequest request) {
+<b class="fc">&nbsp;        String userId = authUserUtils.getUserId(token);</b>
+<b class="fc">&nbsp;        request.validate();</b>
+<b class="fc">&nbsp;        return transactionService.initTransaction(userId, request);}</b>
+&nbsp;
+&nbsp;    @PostMapping(Globals.transactionController_confirmTransactionMap)
+&nbsp;    public ResponseEntity&lt;GetWalletDetailsResponse&gt; confirmTransaction(@RequestHeader(&quot;Authorization&quot;) String token, @PathVariable String transactionId, @RequestParam String code) {
+<b class="fc">&nbsp;        String userId = authUserUtils.getUserId(token);</b>
+<b class="fc">&nbsp;        return transactionService.confirmTransaction(userId, transactionId, code);}</b>
+&nbsp;
+&nbsp;    @PostMapping(Globals.transactionController_cancelTransactionMap)
+&nbsp;    public ResponseEntity&lt;MessageResponse&gt; cancelTransaction(@PathVariable String transactionId, @RequestHeader(&quot;Authorization&quot;) String token) {
+<b class="fc">&nbsp;        String userId = authUserUtils.getUserId(token);</b>
+<b class="fc">&nbsp;        return transactionService.cancelTransaction(userId, transactionId);}</b>
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-03-21 13:11</div>
+</div>
+</body>
+</html>

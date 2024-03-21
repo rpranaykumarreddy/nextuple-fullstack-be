@@ -168,7 +168,7 @@ public class TransactionsServiceTests {
     @Test
     public void testCancelTransaction_Success() {
         when(walletsRepo.findById(any())).thenReturn(Optional.of(TestUtil.WalletTestData.getRechargedWallet1WithTotp()));
-        when(transactionsRepo.findById(TestUtil.TransactionTestData.TRANSACTION_ID)).thenReturn(Optional.of(TestUtil.TransactionTestData.getTransaction1_InitStatus()));
+        when(transactionsRepo.findById(TestUtil.TransactionTestData.TRANSACTION_ID)).thenReturn(Optional.of(TestUtil.TransactionTestData.getTransaction1_InitStatus_TimeNow()));
         ResponseEntity<MessageResponse> responseEntity = transactionService.cancelTransaction(TestUtil.USER1_NAME, TestUtil.TransactionTestData.TRANSACTION_ID);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals("Transaction cancelled", Objects.requireNonNull(responseEntity.getBody()).getMessage());
@@ -190,5 +190,22 @@ public class TransactionsServiceTests {
         when(walletsRepo.findById(any())).thenReturn(Optional.of(TestUtil.WalletTestData.getRechargedWallet1WithTotp()));
         when(transactionsRepo.findById(TestUtil.TransactionTestData.TRANSACTION_ID)).thenReturn(Optional.of(TestUtil.TransactionTestData.getTransaction1()));
         assertThrows(CustomException.BadRequestException.class, () -> transactionService.cancelTransaction(TestUtil.USER1_NAME, TestUtil.TransactionTestData.TRANSACTION_ID));
+    }
+
+    @Test
+    public void testCancelTransaction_Timeout() {
+        when(walletsRepo.findById(any())).thenReturn(Optional.of(TestUtil.WalletTestData.getRechargedWallet1WithTotp()));
+        when(transactionsRepo.findById(TestUtil.TransactionTestData.TRANSACTION_ID)).thenReturn(Optional.of(TestUtil.TransactionTestData.getTransaction1_InitStatus()));
+        CustomException.BadRequestException response = assertThrows( CustomException.BadRequestException.class,()-> transactionService.cancelTransaction(TestUtil.USER1_NAME, TestUtil.TransactionTestData.TRANSACTION_ID));
+        assertEquals("Transaction timeout", response.getMessage());
+    }
+
+    @Test
+    public void testCancelTransaction_SaveFailTimeout() {
+        when(walletsRepo.findById(any())).thenReturn(Optional.of(TestUtil.WalletTestData.getRechargedWallet1WithTotp()));
+        when(transactionsRepo.findById(TestUtil.TransactionTestData.TRANSACTION_ID)).thenReturn(Optional.of(TestUtil.TransactionTestData.getTransaction1_InitStatus()));
+        when(transactionsRepo.save(any())).thenThrow(new RuntimeException("A database error"));
+        assertThrows(CustomException.UnableToSaveException.class, () -> transactionService.cancelTransaction(TestUtil.USER1_NAME, TestUtil.TransactionTestData.TRANSACTION_ID));
+
     }
 }
