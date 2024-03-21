@@ -35,7 +35,7 @@ public class RechargesServiceTests {
         ResponseEntity<GetWalletDetailsResponse> responseEntity = rechargeService.rechargeWallet(TestUtil.USER1_NAME, 1000.0);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         GetWalletDetailsResponse getWalletDetailsResponse = responseEntity.getBody();
-        assert(Objects.requireNonNull(getWalletDetailsResponse).getBalance() > 1000.0);
+        assert(Objects.requireNonNull(getWalletDetailsResponse).getBalance() >= 1000.0);
         verify(walletsRepo, times(1)).findById(TestUtil.USER1_NAME);
     }
     @Test

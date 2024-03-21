@@ -21,10 +21,10 @@ public class RechargeController {
     public ResponseEntity<GetWalletDetailsResponse> rechargeWallet(@RequestHeader("Authorization") String token, @RequestParam double amount){
         String userId = authUserUtils.getUserId(token);
         if(amount <1){
-            throw new CustomException.ValidationException("Your can only recharge with more than ₹1");
+            throw new CustomException.ValidationException("Amount should not be less than ₹1");
         }
-        if(amount > 100000){
-            throw new CustomException.ValidationException("Your cannot recharge with more than ₹1,00,000");
+        if(amount > Globals.rechargeLimit){
+            throw new CustomException.ValidationException(Globals.rechargeLimitValidationError);
         }
         return rechargeService.rechargeWallet(userId, amount);
     }

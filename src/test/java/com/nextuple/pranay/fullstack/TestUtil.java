@@ -5,6 +5,7 @@ import com.nextuple.pranay.fullstack.model.Recharges;
 import com.nextuple.pranay.fullstack.model.Transactions;
 import com.nextuple.pranay.fullstack.model.Users;
 import com.nextuple.pranay.fullstack.model.Wallets;
+import com.nextuple.pranay.fullstack.utils.Globals;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -94,7 +95,7 @@ public class TestUtil {
             return new InitTransactionRequest(USER2_NAME, 0);
         }
         public static InitTransactionRequest getInitTransactionRequest4() {
-            return new InitTransactionRequest(USER2_NAME, 1_00_00_001);
+            return new InitTransactionRequest(USER2_NAME, Globals.transactionLimit+0.01);
         }
         public static InitTransactionResponse getInitTransactionResponse() {
             return new InitTransactionResponse(TRANSACTION_ID, USER1_NAME, USER2_NAME, TRANSACTION1_AMOUNT, TRANSACTION1_CREATED.plusMinutes(1));

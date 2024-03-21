@@ -2,6 +2,10 @@ package com.nextuple.pranay.fullstack.utils;
 
 public class Globals {
     public static final int pageSize = 5;
+    public static final int rechargeLimit = 1_00_000;
+    public static final String rechargeLimitValidationError = "Amount should be less than ₹1,00,000";
+    public static final int transactionLimit = 1_00_00_000;
+    public static final String transactionLimitValidationError = "Amount should be less than ₹1,00,00,000";
     public static final int transactionTimeoutMins = 1;
     public static final String authControllerMap = "/auth";
     public static final String authController_addNewUserMap = "/register";

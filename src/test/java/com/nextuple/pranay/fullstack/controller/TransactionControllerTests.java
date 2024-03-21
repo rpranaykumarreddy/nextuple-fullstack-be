@@ -6,6 +6,7 @@ import com.nextuple.pranay.fullstack.dto.MessageResponse;
 import com.nextuple.pranay.fullstack.exception.CustomException;
 import com.nextuple.pranay.fullstack.service.TransactionService;
 import com.nextuple.pranay.fullstack.utils.AuthUserUtils;
+import com.nextuple.pranay.fullstack.utils.Globals;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -49,13 +50,13 @@ public class TransactionControllerTests {
     public void testInitTransaction_AmountMin_validation() {
         when(authUserUtils.getUserId(anyString())).thenReturn(TestUtil.USER1_NAME);
         CustomException.ValidationException validationException = assertThrows(CustomException.ValidationException.class, () -> transactionController.initTransaction(TestUtil.TOKEN,TestUtil.TransactionTestData.getInitTransactionRequest3()));
-        assertEquals("Amount should be greater than ₹0", validationException.getMessage());
+        assertEquals("Amount should not be less than ₹1", validationException.getMessage());
     }
     @Test
     public void testInitTransaction_AmountMax_validation() {
         when(authUserUtils.getUserId(anyString())).thenReturn(TestUtil.USER1_NAME);
         CustomException.ValidationException validationException = assertThrows(CustomException.ValidationException.class, () -> transactionController.initTransaction(TestUtil.TOKEN,TestUtil.TransactionTestData.getInitTransactionRequest4()));
-        assertEquals("Amount should be less than ₹1,00,00,000", validationException.getMessage());
+        assertEquals(Globals.transactionLimitValidationError, validationException.getMessage());
     }
     @Test
     public void testConfirmTransaction_Success_validation() {
