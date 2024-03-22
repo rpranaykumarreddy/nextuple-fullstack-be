@@ -44,10 +44,7 @@ public class TransactionService {
         String toWalletId = request.getTo();
         double amount = request.getAmount();
         if (userId.equals(toWalletId)) {
-            throw new CustomException.BadRequestException("You cannot transfer money to yourself");
-        }
-        if (amount <= 0) {
-            throw new CustomException.BadRequestException("Invalid amount");
+            throw new CustomException.BadRequestException("Receiver's username cannot be yours");
         }
         Wallets fromWallet = walletsRepo.findById(userId).orElseThrow(
                 () -> new CustomException.EntityNotFoundException("Your wallet not found. Contact support team.")

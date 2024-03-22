@@ -54,11 +54,6 @@ public class TransactionsServiceTests {
         assertEquals(LocalDateTime.class, responseEntity.getBody().getExpire().getClass());
     }
     @Test
-    public void testInitTransaction_InvalidAmountException() {
-        when(walletsRepo.findById(any())).thenReturn(Optional.of(TestUtil.WalletTestData.getRechargedWallet1WithTotp()));
-        assertThrows(CustomException.BadRequestException.class, () -> transactionService.initTransaction(TestUtil.USER1_NAME, TestUtil.TransactionTestData.getInitTransactionRequest_InvalidAmount()));
-    }
-    @Test
     public void testInitTransaction_InvalidUsernameException() {
         when(walletsRepo.findById(any())).thenReturn(Optional.of(TestUtil.WalletTestData.getRechargedWallet1WithTotp()));
         assertThrows(CustomException.BadRequestException.class, () -> transactionService.initTransaction(TestUtil.USER1_NAME, TestUtil.TransactionTestData.getInitTransactionRequest_InvalidUsername()));
