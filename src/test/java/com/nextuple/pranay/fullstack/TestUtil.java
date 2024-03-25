@@ -52,7 +52,7 @@ public class TestUtil {
             return wallet;
         }
         public static Wallets getWallet1ResponseTotpEnabled() {
-            return new Wallets(USER1_NAME, USER1_BALANCE_INIT, "secretKey", true, USER1_UPDATED, USER1_CREATED);
+            return new Wallets(USER1_NAME, USER1_BALANCE_INIT, "Wk8yTFNaN1AzT0ZRVVMyRk5aWFFUVVZBS1g2WlZTT0Q=", true, USER1_UPDATED, USER1_CREATED);
         }
         public static Wallets getRechargedWallet1() {
             return new Wallets(USER1_NAME, 30000.3, null, false, USER1_UPDATED, USER1_CREATED);
@@ -61,7 +61,7 @@ public class TestUtil {
             return new GetWalletDetailsResponse(getRechargedWallet1());
         }
         public static Wallets getRechargedWallet1WithTotp() {
-            return new Wallets(USER1_NAME, 30000.3, "secretKey", true, USER1_UPDATED, USER1_CREATED);
+            return new Wallets(USER1_NAME, 30000.3, "Wk8yTFNaN1AzT0ZRVVMyRk5aWFFUVVZBS1g2WlZTT0Q=", true, USER1_UPDATED, USER1_CREATED);
         }
 
         public static Wallets getRechargedWallet2() {

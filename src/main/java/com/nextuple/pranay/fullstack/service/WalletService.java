@@ -28,7 +28,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.springframework.data.domain.Pageable;
-import java.time.LocalDateTime;
+
+import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 
 import static dev.samstevens.totp.util.Utils.getDataUriForImage;
@@ -62,7 +64,8 @@ public class WalletService {
         if(wallet.isTotpEnabled()){
             throw new CustomException.ValidationException("TOTP already enabled");
         }
-        wallet.setSecretKey(secret);
+        String encryptedSecret = Base64.getEncoder().withoutPadding().encodeToString(secret.getBytes());
+        wallet.setSecretKey(encryptedSecret);
         try {
             walletsRepo.save(wallet);
         } catch (Exception e) {
@@ -94,8 +97,9 @@ public class WalletService {
         if(wallet.isTotpEnabled()){
             throw new CustomException.ValidationException("TOTP already enabled");
         }
-        String secret = wallet.getSecretKey();
-        boolean successful = verifier.isValidCode(secret, code);
+        byte[] decodedBytes = Base64.getDecoder().decode(wallet.getSecretKey());
+        String decodedSecret = new String(decodedBytes);
+        boolean successful = verifier.isValidCode(decodedSecret, code);
         if(successful){
             try {
                 wallet.setTotpEnabled(true);

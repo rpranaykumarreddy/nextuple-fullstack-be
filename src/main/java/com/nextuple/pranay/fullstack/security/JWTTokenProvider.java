@@ -17,8 +17,8 @@ import java.util.Date;
 
 @Component
 public class JWTTokenProvider {
-    @Value("${app.jwt-secret}")
-    private String jwtSecret;
+//    @Value("${app.jwt-secret}")
+    private String jwtSecret =  System.getenv("JWT_SECRET");
     @Value("${app.jwt-expiration-milliseconds}")
     private long jwtExpirationDate;
     @Autowired

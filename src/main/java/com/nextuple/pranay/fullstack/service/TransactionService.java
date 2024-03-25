@@ -24,6 +24,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Base64;
 
 @Service
 public class TransactionService {
@@ -103,8 +105,9 @@ public class TransactionService {
             throw new CustomException.BadRequestException("Please enter TOTP");
         }
         if(fromWallet.isTotpEnabled() && !fromWallet.getSecretKey().isBlank()){
-            String secret = fromWallet.getSecretKey();
-            boolean successful = verifier.isValidCode(secret, code);
+            byte[] decodedBytes = Base64.getDecoder().decode(fromWallet.getSecretKey());
+            String decodedSecret = new String(decodedBytes);
+            boolean successful = verifier.isValidCode(decodedSecret, code);
             if (!successful) {
                 throw new CustomException.BadRequestException("Incorrect TOTP");
             }
