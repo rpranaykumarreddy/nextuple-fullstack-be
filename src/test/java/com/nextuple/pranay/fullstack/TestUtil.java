@@ -101,25 +101,25 @@ public class TestUtil {
             return new InitTransactionResponse(TRANSACTION_ID, USER1_NAME, USER2_NAME, TRANSACTION1_AMOUNT, TRANSACTION1_CREATED.plusMinutes(1));
         }
         public static Transactions getTransaction1_InitStatus() {
-            return new Transactions(TRANSACTION_ID, USER1_NAME,USER2_NAME, TRANSACTION1_AMOUNT, Transactions.TransactionStatus.INIT, TRANSACTION1_CREATED);
+            return new Transactions(TRANSACTION_ID, USER1_NAME,USER2_NAME, TRANSACTION1_AMOUNT, Transactions.TransactionStatus.INIT, TRANSACTION1_CREATED, false);
         }
         public static Transactions getTransaction1_InitStatus_TimeNow() {
-            return new Transactions(TRANSACTION_ID, USER1_NAME,USER2_NAME, TRANSACTION1_AMOUNT, Transactions.TransactionStatus.INIT, LocalDateTime.now());
+            return new Transactions(TRANSACTION_ID, USER1_NAME,USER2_NAME, TRANSACTION1_AMOUNT, Transactions.TransactionStatus.INIT, LocalDateTime.now(), false);
         }
         public static Transactions getTransaction1() {
-            return new Transactions(TRANSACTION_ID, USER1_NAME,USER2_NAME, TRANSACTION1_AMOUNT, TRANSACTION1_STATUS, TRANSACTION1_CREATED);
+            return new Transactions(TRANSACTION_ID, USER1_NAME,USER2_NAME, TRANSACTION1_AMOUNT, TRANSACTION1_STATUS, TRANSACTION1_CREATED, false);
         }
         public static Transactions getTransaction2() {
-            return new Transactions(TRANSACTION_ID2, USER1_NAME,USER2_NAME, TRANSACTION2_AMOUNT, TRANSACTION2_STATUS, TRANSACTION2_CREATED);
+            return new Transactions(TRANSACTION_ID2, USER1_NAME,USER2_NAME, TRANSACTION2_AMOUNT, TRANSACTION2_STATUS, TRANSACTION2_CREATED, false);
         }
         public static Transactions getTransaction3() {
-            return new Transactions(TRANSACTION_ID3, USER2_NAME,USER1_NAME, TRANSACTION3_AMOUNT, TRANSACTION3_STATUS, TRANSACTION3_CREATED);
+            return new Transactions(TRANSACTION_ID3, USER2_NAME,USER1_NAME, TRANSACTION3_AMOUNT, TRANSACTION3_STATUS, TRANSACTION3_CREATED, false);
         }
         public static Transactions getTransaction1_INIT() {
-            return new Transactions(TRANSACTION_ID, USER1_NAME,USER2_NAME, TRANSACTION1_AMOUNT, Transactions.TransactionStatus.INIT, TRANSACTION1_CREATED);
+            return new Transactions(TRANSACTION_ID, USER1_NAME,USER2_NAME, TRANSACTION1_AMOUNT, Transactions.TransactionStatus.INIT, TRANSACTION1_CREATED, false);
         }
         public static Transactions getTransaction2_Timeout() {
-            return new Transactions(TRANSACTION_ID2, USER1_NAME,USER2_NAME, TRANSACTION2_AMOUNT, Transactions.TransactionStatus.TIMEOUT, TRANSACTION2_CREATED);
+            return new Transactions(TRANSACTION_ID2, USER1_NAME,USER2_NAME, TRANSACTION2_AMOUNT, Transactions.TransactionStatus.TIMEOUT, TRANSACTION2_CREATED, false);
         }
 
         public static List<Transactions> getFromTransactions() {

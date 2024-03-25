@@ -29,6 +29,8 @@ public class GetStatementResponse {
         private String fromTo;
         private double amount;
         private LocalDateTime createdAt;
+        private String totpVerified = "-";
+        private double cashback= 0;
         public static String  statusToString(Transactions.TransactionStatus status){
             if(status == Transactions.TransactionStatus.SUCCESSFUL){
                 return "Successful";
@@ -45,9 +47,10 @@ public class GetStatementResponse {
             statementDetails.setId(recharge.getId());
             statementDetails.setType("Recharge");
             statementDetails.setStatus("Successful");
-            statementDetails.setFromTo("Self");
+            statementDetails.setFromTo("SELF");
             statementDetails.setAmount(recharge.getAmount());
             statementDetails.setCreatedAt(recharge.getCreated());
+            statementDetails.setCashback(recharge.getCashback());
             return statementDetails;
         }
 
@@ -59,6 +62,7 @@ public class GetStatementResponse {
             statementDetails.setFromTo(transactions.getToUId());
             statementDetails.setAmount(transactions.getAmount());
             statementDetails.setCreatedAt(transactions.getCreated());
+            statementDetails.setTotpVerified(transactions.isTOTPVerified()? "Yes":"No");
             return statementDetails;
         }
 
@@ -70,6 +74,7 @@ public class GetStatementResponse {
             statementDetails.setFromTo(transactions.getFromUId());
             statementDetails.setAmount(transactions.getAmount());
             statementDetails.setCreatedAt(transactions.getCreated());
+            statementDetails.setTotpVerified(transactions.isTOTPVerified()? "Yes":"No");
             return statementDetails;
         }
     }

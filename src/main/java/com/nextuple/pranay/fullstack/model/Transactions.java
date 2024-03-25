@@ -20,6 +20,7 @@ public class Transactions {
     private double amount;
     private TransactionStatus status;
     private LocalDateTime created;
+    private boolean TOTPVerified = false;
 
     public enum TransactionStatus {
         INIT, SUCCESSFUL, CANCELLED, TIMEOUT

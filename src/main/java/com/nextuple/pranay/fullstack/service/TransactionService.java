@@ -63,6 +63,7 @@ public class TransactionService {
         transaction.setAmount(amount);
         transaction.setStatus(Transactions.TransactionStatus.INIT);
         transaction.setCreated(java.time.LocalDateTime.now());
+        transaction.setTOTPVerified(fromWallet.isTotpEnabled());
         try{
             transactionsRepo.save(transaction);
         }catch (Exception e){
@@ -104,6 +105,7 @@ public class TransactionService {
         if(fromWallet.isTotpEnabled() && (code == null || code.isBlank())){
             throw new CustomException.BadRequestException("Please enter TOTP");
         }
+        transaction.setTOTPVerified(false);
         if(fromWallet.isTotpEnabled() && !fromWallet.getSecretKey().isBlank()){
             byte[] decodedBytes = Base64.getDecoder().decode(fromWallet.getSecretKey());
             String decodedSecret = new String(decodedBytes);
@@ -111,6 +113,7 @@ public class TransactionService {
             if (!successful) {
                 throw new CustomException.BadRequestException("Incorrect TOTP");
             }
+            transaction.setTOTPVerified(true);
         }
         fromWallet.setBalance(fromWallet.getBalance() - transaction.getAmount());
         toWallet.setBalance(toWallet.getBalance() + transaction.getAmount());
