@@ -108,6 +108,23 @@ public class WalletService {
             throw new CustomException.ValidationException("Incorrect TOTP");
         }
     }
+
+    public ResponseEntity<MessageResponse> disableTotp(String userId) {
+        Wallets wallet = walletsRepo.findById(userId).orElseThrow(
+                ()->new CustomException.EntityNotFoundException("Your wallet not found. Contact support team.")
+        );
+        if(!wallet.isTotpEnabled()){
+            throw new CustomException.ValidationException("TOTP already disabled");
+        }
+        wallet.setTotpEnabled(false);
+        wallet.setSecretKey(null);
+        try {
+            walletsRepo.save(wallet);
+        } catch (Exception e) {
+            throw new CustomException.UnableToSaveException("Issue in disabling TOTP");
+        }
+        return new ResponseEntity<>(new MessageResponse("TOTP disabled"), HttpStatus.OK);
+    }
     @Transactional
     public ResponseEntity<GetStatementResponse> getStatement(String userId, int pageNo) {
         List<Transactions> fromTransactions = transactionsRepo.findAllByFromUIdIgnoreCase(userId);
@@ -126,4 +143,5 @@ public class WalletService {
         GetCashbackResponse response = new GetCashbackResponse(recharges, noOfDocuments);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
 }

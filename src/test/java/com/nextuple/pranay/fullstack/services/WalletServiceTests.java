@@ -3,6 +3,7 @@ package com.nextuple.pranay.fullstack.services;
 import com.nextuple.pranay.fullstack.dto.GetCashbackResponse;
 import com.nextuple.pranay.fullstack.dto.GetStatementResponse;
 import com.nextuple.pranay.fullstack.dto.GetWalletDetailsResponse;
+import com.nextuple.pranay.fullstack.dto.MessageResponse;
 import com.nextuple.pranay.fullstack.exception.CustomException;
 import com.nextuple.pranay.fullstack.model.Wallets;
 import com.nextuple.pranay.fullstack.repo.RechargesRepo;
@@ -124,7 +125,30 @@ public class WalletServiceTests {
         when(walletsRepo.save(any())).thenThrow(new RuntimeException("A database error"));
         assertThrows(CustomException.UnableToSaveException.class, () -> walletService.confirmTotp(TestUtil.USER1_NAME, TestUtil.WalletTestData.TOTP_CODE));
     }
+    @Test
+    public void testDisableTotp_Success() {
+        when(walletsRepo.findById(TestUtil.USER1_NAME)).thenReturn(java.util.Optional.of(TestUtil.WalletTestData.getWallet1ResponseTotpEnabled()));
+        ResponseEntity<MessageResponse> responseEntity = walletService.disableTotp(TestUtil.USER1_NAME);
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    }
+    @Test
+    public void testDisableTotp_EntityNotFoundException() {
+        when(walletsRepo.findById(TestUtil.USER1_NAME)).thenReturn(java.util.Optional.empty());
+        assertThrows(CustomException.EntityNotFoundException.class, () -> walletService.disableTotp(TestUtil.USER1_NAME));
+    }
 
+    @Test
+    public void testDisableTotp_ValidationException_TotpAlreadyDisabled() {
+        when(walletsRepo.findById(TestUtil.USER1_NAME)).thenReturn(java.util.Optional.of(TestUtil.WalletTestData.getWallet1Response()));
+        CustomException.ValidationException response =assertThrows(CustomException.ValidationException.class, () -> walletService.disableTotp(TestUtil.USER1_NAME));
+        assertEquals("TOTP already disabled", response.getMessage());
+    }
+    @Test
+    public void testDisableTotp_SaveNotSuccessfulException() {
+        when(walletsRepo.findById(TestUtil.USER1_NAME)).thenReturn(java.util.Optional.of(TestUtil.WalletTestData.getWallet1ResponseTotpEnabled()));
+        when(walletsRepo.save(any())).thenThrow(new RuntimeException("A database error"));
+        assertThrows(CustomException.UnableToSaveException.class, () -> walletService.disableTotp(TestUtil.USER1_NAME));
+    }
     @Test
     public void testGetStatement_Success() {
         when(transactionsRepo.findAllByFromUIdIgnoreCase(TestUtil.USER1_NAME)).thenReturn(TestUtil.TransactionTestData.getFromTransactions());

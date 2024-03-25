@@ -21,6 +21,7 @@ public class Globals {
     public static final String walletControllerMap = "/wallet";
     public static final String walletController_getWalletDetailsMap = "/details";
     public static final String walletController_createTotpMap = "/totp";
+    public static final String walletController_disableTotpMap = "/totp/disable";
     public static final String walletController_confirmTotpMap = "/totp/confirm";
     public static final String walletController_getStatementMap = "/statement";
     public static final String walletController_getCashbackMap = "/cashback";

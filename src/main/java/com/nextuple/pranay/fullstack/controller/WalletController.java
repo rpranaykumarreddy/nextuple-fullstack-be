@@ -44,6 +44,11 @@ public class WalletController {
         return walletService.confirmTotp( userId, code);
     }
 
+    @PutMapping(Globals.walletController_disableTotpMap)
+    public ResponseEntity<MessageResponse> disableTotp(@RequestHeader("Authorization") String token){
+        String userId = authUserUtils.getUserId(token);
+        return walletService.disableTotp(userId);
+    }
     @GetMapping(Globals.walletController_getStatementMap)
     public ResponseEntity<GetStatementResponse> getStatement(@RequestHeader("Authorization") String token,@RequestParam(defaultValue = "0") int page) {
         String userId = authUserUtils.getUserId(token);

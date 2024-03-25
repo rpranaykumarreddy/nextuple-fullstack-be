@@ -48,6 +48,12 @@ public class WalletControllerTests {
         assertDoesNotThrow(() -> walletController.confirmTotp(TestUtil.TOKEN, TestUtil.WalletTestData.TOTP_CODE));
     }
     @Test
+    public void testDisableTotp_Success_validation() {
+        when(authUserUtils.getUserId(anyString())).thenReturn(TestUtil.USER1_NAME);
+        when(walletService.disableTotp(anyString())).thenReturn(new ResponseEntity<>(new MessageResponse("Totp disabled successfully"), HttpStatus.OK));
+        assertDoesNotThrow(() -> walletController.disableTotp(TestUtil.TOKEN));
+    }
+    @Test
     public void testGetStatement_Success_validation() {
         when(authUserUtils.getUserId(anyString())).thenReturn(TestUtil.USER1_NAME);
         when(walletService.getStatement(anyString(), anyInt())).thenReturn(new ResponseEntity<>(TestUtil.StatementTestData.needStatementResponse(), HttpStatus.OK));
